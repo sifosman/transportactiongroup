@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cloud VPS Pricing Comparison (2 vCPU / 4 GB RAM)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #0f172a; --card: #111827; --muted: #94a3b8; --text: #e5e7eb; --accent: #10b981; --accent-2: #6366f1; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; background: linear-gradient(135deg, #0b1020, #0f172a 35%, #0b1020 100%); color: var(--text); }
+    .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+    h1 { font-size: 1.6rem; margin: 0; line-height: 1.2; }
+    .sub { color: var(--muted); font-size: 0.95rem; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    button, a.button { background: var(--accent); border: none; color: white; padding: 10px 14px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 0.95rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 10px 30px rgba(16,185,129,0.25); }
+    button.secondary { background: var(--accent-2); box-shadow: 0 10px 30px rgba(99,102,241,0.25); }
+    .note { margin: 16px 0 24px; color: var(--muted); font-size: 0.9rem; }
+
+    .card { background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)); border: 1px solid rgba(148,163,184,0.18); border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+
+    table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 12px; }
+    thead th { background: rgba(99,102,241,0.15); color: #fff; text-align: left; font-weight: 700; padding: 12px; font-size: 0.95rem; }
+    tbody td { padding: 12px; border-bottom: 1px solid rgba(148,163,184,0.16); vertical-align: top; font-size: 0.95rem; }
+    tbody tr:hover { background: rgba(148,163,184,0.06); }
+    .provider { font-weight: 700; }
+    .pill { display: inline-block; padding: 4px 8px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; }
+    .badge-best { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.35); }
+    .badge-za { background: rgba(99,102,241,0.15); color: #c7d2fe; border: 1px solid rgba(99,102,241,0.35); }
+
+    .rec { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    .rec .item { padding: 14px; border-radius: 12px; background: rgba(148,163,184,0.06); border: 1px solid rgba(148,163,184,0.16); }
+    .rec strong { color: #fff; }
+
+    .links a { color: #93c5fd; text-decoration: none; }
+    .links a:hover { text-decoration: underline; }
+
+    footer { margin: 28px 0; color: var(--muted); font-size: 0.85rem; }
+
+    @media (min-width: 860px) {
+      .grid { grid-template-columns: 2fr 1fr; }
+    }
+
+    /* Print to PDF */
+    @media print {
+      body { background: #fff; color: #111; }
+      .card { box-shadow: none; border: 1px solid #ddd; }
+      header .actions, .note a { display: none !important; }
+      thead th { background: #f0f3ff; color: #111; }
+      .pill { border: 1px solid #999 !important; color: #111 !important; background: #eee !important; }
+      a { color: #111; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="pdf-root">
+    <header>
+      <div>
+        <h1>Cloud VPS Pricing Comparison</h1>
+        <div class="sub">Spec target: 2 vCPU / 4 GB RAM (web + Moodle). Updated: <span id="asof"></span></div>
+      </div>
+      <div class="actions">
+        <button onclick="downloadPDF()" title="Download as PDF">&#128462; Download PDF</button>
+        <a class="button secondary" href="#links" title="Go to pricing links">&#128279; Pricing Links</a>
+      </div>
+    </header>
+
+    <div class="note card">
+      Indicative monthly pricing gathered from provider pricing pages. Final totals vary by region, bandwidth, storage, and taxes. Use links below to confirm live pricing before purchase.
+    </div>
+
+    <div class="grid">
+      <section class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Provider</th>
+              <th>Plan (approx.)</th>
+              <th>Indicative Price</th>
+              <th>Bandwidth/Notes</th>
+              <th>Why pick it</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="provider">Hetzner (Germany) <span class="pill badge-best">Best Value</span></td>
+              <td>Shared vCPU CX (2 vCPU / 4 GB)</td>
+              <td>€4–6 / mo</td>
+              <td>Large included egress; EU data residency</td>
+              <td>Lowest cost per spec; reliable; great price/perf</td>
+            </tr>
+            <tr>
+              <td class="provider">DigitalOcean</td>
+              <td>Basic Droplet (2 vCPU / 4 GB)</td>
+              <td>$24 / mo</td>
+              <td>Generous transfer; simple billing</td>
+              <td>Very popular, great docs & ecosystem</td>
+            </tr>
+            <tr>
+              <td class="provider">Linode / Akamai</td>
+              <td>Essential Compute (2 vCPU / 4 GB)</td>
+              <td>$24 / mo</td>
+              <td>Flat pricing across regions</td>
+              <td>Solid support and predictable costs</td>
+            </tr>
+            <tr>
+              <td class="provider">Vultr</td>
+              <td>Cloud Compute (2 vCPU / 4 GB)</td>
+              <td>$24 / mo</td>
+              <td>Often NVMe; many regions</td>
+              <td>Competitive features and pricing</td>
+            </tr>
+            <tr>
+              <td class="provider">AWS Lightsail</td>
+              <td>Instance bundle (~2 vCPU / 4 GB)</td>
+              <td>$20–$25 / mo</td>
+              <td>Includes transfer bundle; AWS ecosystem</td>
+              <td>Easy on-ramp to AWS; predictable tiering</td>
+            </tr>
+            <tr>
+              <td class="provider">Xneelo (South Africa) <span class="pill badge-za">ZA Local</span></td>
+              <td>Cloud Server (2 vCPU / 4 GB)</td>
+              <td>~R400–R600 / mo</td>
+              <td>Local DC & support; low-latency in ZA</td>
+              <td>Best for SA latency & local billing</td>
+            </tr>
+            <tr>
+              <td class="provider">Afrihost (South Africa) <span class="pill badge-za">ZA Local</span></td>
+              <td>Cloud/VPS (2 vCPU / 4 GB)</td>
+              <td>~R389–R600 / mo</td>
+              <td>Specs and transfer vary by plan</td>
+              <td>SA-based option; simple upgrades</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <aside class="card">
+        <h3 style="margin-top:0">Recommendations</h3>
+        <div class="rec">
+          <div class="item">
+            <strong>Overall best value:</strong> Hetzner Cloud (Germany). If ZA data residency/latency is not mandatory, this minimizes monthly cost while delivering strong performance.
+          </div>
+          <div class="item">
+            <strong>Mainstream & predictable:</strong> DigitalOcean/Linode/Vultr at ~$24/mo. Great docs, tooling, and ease of use.
+          </div>
+          <div class="item">
+            <strong>South Africa locality:</strong> Xneelo or Afrihost. Expect ~R400–R600/mo for 2 vCPU/4 GB. Choose if ZA latency or local billing is important.
+          </div>
+          <div class="item">
+            <strong>AWS alignment:</strong> AWS Lightsail ($20–$25/mo) if future AWS services (RDS, S3, CloudWatch) are likely.
+          </div>
+        </div>
+        <div class="note" style="margin-top:14px">Final choice should consider: latency to users (ZA vs EU), budget, and future scaling (DB, CDN, backups).</div>
+      </aside>
+    </div>
+
+    <section id="links" class="card" style="margin-top:18px">
+      <h3 style="margin-top:0">Official pricing links</h3>
+      <div class="links">
+        <ul>
+          <li><a href="https://www.hetzner.com/cloud" target="_blank" rel="noopener">Hetzner Cloud (Germany)</a></li>
+          <li><a href="https://www.digitalocean.com/pricing/droplets" target="_blank" rel="noopener">DigitalOcean Droplets</a></li>
+          <li><a href="https://www.linode.com/pricing/" target="_blank" rel="noopener">Linode / Akamai Pricing</a></li>
+          <li><a href="https://www.vultr.com/pricing/" target="_blank" rel="noopener">Vultr Pricing</a></li>
+          <li><a href="https://aws.amazon.com/lightsail/pricing/" target="_blank" rel="noopener">AWS Lightsail Pricing</a></li>
+          <li><a href="https://xneelo.co.za/cloud/" target="_blank" rel="noopener">Xneelo Cloud (South Africa)</a></li>
+          <li><a href="https://www.afrihost.com/cloud-hosting" target="_blank" rel="noopener">Afrihost Cloud Hosting (South Africa)</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      Generated for TAG infrastructure planning. Prices are indicative and may change—verify on provider sites. If printing, use A4 Landscape for best layout.
+    </footer>
+  </div>
+
+  <script>
+    // Timestamp
+    const now = new Date();
+    document.getElementById('asof').textContent = now.toLocaleDateString();
+
+    // PDF via browser print dialog (choose "Save as PDF")
+    function downloadPDF(){
+      // Force white background for print and open dialog
+      window.print();
+    }
+  </script>
+</body>
+</html>
