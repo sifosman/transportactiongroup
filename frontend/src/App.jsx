@@ -1162,11 +1162,11 @@ function App() {
       <Navigation />
       {/* Refund Policy Modal */}
       <Dialog open={refundOpen} onOpenChange={setRefundOpen}>
-        <DialogContent className="sm:max-w-2xl">
+        <DialogContent className="max-w-[calc(100%-1rem)] sm:max-w-2xl p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle>Refund & Cancellation Policy</DialogTitle>
           </DialogHeader>
-          <div className="mt-2 text-sm text-gray-800 whitespace-pre-wrap max-h-[70vh] overflow-auto">
+          <div className="mt-2 text-base sm:text-sm leading-7 text-gray-800 whitespace-pre-wrap break-words max-h-[75vh] sm:max-h-[80vh] overflow-y-auto px-1 sm:px-0">
             {refundMarkdown || 'Loading policy...'}
           </div>
         </DialogContent>
