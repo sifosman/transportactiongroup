@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import { Search, Users, BookOpen, Award, Truck, Leaf, Building, Globe, Star, Download, Eye, MapPin, Calendar, Clock, CheckCircle, User, Mail, Lock, Phone, FileText, Upload } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './components/ui/dialog.jsx';
 
 // Import assets
 import tagLogo from './assets/TAGhiresblack.png';
@@ -13,6 +14,9 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [loginForm, setLoginForm] = useState({ email: '', password: '' });
   const [registerForm, setRegisterForm] = useState({ name: '', email: '', password: '', phone: '', role: 'driver' });
+  const [refundOpen, setRefundOpen] = useState(false);
+  const [refundMarkdown, setRefundMarkdown] = useState('');
+  const [contactInfo, setContactInfo] = useState({ emails: [], address: '' });
   const [profileForm, setProfileForm] = useState({
     personalInfo: { name: '', email: '', phone: '', location: '', experience: '' },
     workHistory: [{ company: '', position: '', duration: '', description: '' }],
@@ -358,6 +362,25 @@ function App() {
     ));
   };
 
+  // Load refund policy markdown and extract contact details
+  useEffect(() => {
+    fetch('/refund-policy.md')
+      .then((res) => res.text())
+      .then((text) => {
+        setRefundMarkdown(text);
+        // Extract emails (cleanup any accidental spaces like "sales@ transportactiongroup.com")
+        const emailMatches = Array.from(text.matchAll(/[A-Za-z0-9._%+-]+@ ?transportactiongroup\.com/gi)).map(m => m[0].replace('@ ', '@'));
+        // Extract physical address
+        let address = '';
+        const addrMatch = text.match(/Physical address:\s*(.*)/i);
+        if (addrMatch) address = addrMatch[1].trim();
+        setContactInfo({ emails: Array.from(new Set(emailMatches)), address });
+      })
+      .catch(() => {
+        // fail silently; UI will just not show content
+      });
+  }, []);
+
   // Smooth scroll function
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -426,7 +449,31 @@ function App() {
           <button onClick={() => scrollToSection('partner')} className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
             Partner with Us
           </button>
+          <button onClick={() => setRefundOpen(true)} className="bg-gray-900 text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors">
+            Refund Policy
+          </button>
         </div>
+        {/* Contact details snippet from refund policy */}
+        {(contactInfo.emails.length > 0 || contactInfo.address) && (
+          <div className="mt-8 text-sm text-gray-700 max-w-2xl mx-auto">
+            <div className="flex flex-col gap-1">
+              {contactInfo.emails.length > 0 && (
+                <div>
+                  <span className="font-semibold">Contact Emails:</span>{' '}
+                  {contactInfo.emails.map((e, i) => (
+                    <a key={e+i} href={`mailto:${e}`} className="text-blue-700 hover:underline mr-2">{e}</a>
+                  ))}
+                </div>
+              )}
+              {contactInfo.address && (
+                <div className="flex items-center justify-center gap-2">
+                  <MapPin className="w-4 h-4 text-gray-600" />
+                  <span>{contactInfo.address}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -1113,6 +1160,17 @@ function App() {
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
+      {/* Refund Policy Modal */}
+      <Dialog open={refundOpen} onOpenChange={setRefundOpen}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Refund & Cancellation Policy</DialogTitle>
+          </DialogHeader>
+          <div className="mt-2 text-sm text-gray-800 whitespace-pre-wrap max-h-[70vh] overflow-auto">
+            {refundMarkdown || 'Loading policy...'}
+          </div>
+        </DialogContent>
+      </Dialog>
       {renderCurrentSection()}
       <Footer />
     </div>
