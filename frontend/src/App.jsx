@@ -578,9 +578,9 @@ function App() {
                 <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-600" /> CV generation tools</li>
               </ul>
             </div>
-            <button className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
-              Login to Enroll
-            </button>
+            <a href="https://learning.transportactiongroup.com/enrol/index.php?id=2" className="w-full inline-block text-center bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+              Enrol: Professional Truck Driving
+            </a>
           </div>
 
           {/* Green Freight Professional Program */}
@@ -613,9 +613,9 @@ function App() {
                 <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-purple-600" /> CV generation tools</li>
               </ul>
             </div>
-            <button className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors">
-              Login to Enroll
-            </button>
+            <a href="https://learning.transportactiongroup.com/enrol/index.php?id=3" className="w-full inline-block text-center bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors">
+              Enrol: Green Freight Program
+            </a>
           </div>
         </div>
       </div>
