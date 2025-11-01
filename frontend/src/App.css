@@ -117,6 +117,17 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* Make interactive elements show pointer cursor */
+  a,
+  button,
+  [role="button"] {
+    cursor: pointer;
+  }
+  button[disabled],
+  .disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
 }
 
 /* Professional scrollbar for modal */

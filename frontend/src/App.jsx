@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import { Search, Users, BookOpen, Award, Truck, Leaf, Building, Globe, Star, Download, Eye, MapPin, Calendar, Clock, CheckCircle, User, Mail, Lock, Phone, FileText, Upload } from 'lucide-react';
+import { Search, Users, BookOpen, Award, Truck, Leaf, Building, Globe, Star, Download, Eye, MapPin, Calendar, Clock, CheckCircle, User, Mail, Lock, Phone, FileText, Upload, Calculator } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './components/ui/dialog.jsx';
+import TCOCalculator from './components/TCOCalculator.jsx';
 
 // Import assets
 import tagLogo from './assets/TAGhiresblack.png';
@@ -416,6 +417,10 @@ function App() {
               <button onClick={() => scrollToSection('search')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-pink-600">
                 Search Professionals
               </button>
+              <button onClick={() => setCurrentSection('tco-calculator')} className={`px-3 py-2 rounded-md text-sm font-medium ${currentSection === 'tco-calculator' ? 'bg-green-100 text-green-700' : 'text-gray-700 hover:text-green-600'}`}>
+                <Calculator className="w-4 h-4 inline mr-1" />
+                TCO Calculator
+              </button>
               <button onClick={() => setCurrentSection('login')} className={`px-3 py-2 rounded-md text-sm font-medium ${currentSection === 'login' ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:text-indigo-600'}`}>
                 Login
               </button>
@@ -501,6 +506,68 @@ function App() {
             <Leaf className="w-12 h-12 text-orange-600 mx-auto mb-4" />
             <div className="text-3xl font-bold text-orange-600">25%</div>
             <div className="text-gray-600">Average Emission Reduction</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const TCOCalculatorPromo = () => (
+    <div className="py-16 bg-gradient-to-br from-green-50 via-blue-50 to-purple-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+          <div className="grid md:grid-cols-2 gap-0">
+            <div className="p-8 md:p-12 flex flex-col justify-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-600 to-blue-600 rounded-full mb-6">
+                <Calculator className="w-8 h-8 text-white" />
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Electric Truck TCO Calculator
+              </h2>
+              <p className="text-lg text-gray-600 mb-6">
+                Make data-driven decisions for your fleet electrification journey. Compare Total Cost of Ownership between diesel and electric trucks across African corridors.
+              </p>
+              <div className="space-y-3 mb-8">
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+                  <span className="text-gray-700">Compare diesel vs electric across 4 African corridors</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+                  <span className="text-gray-700">10-year lifetime cost analysis with break-even calculations</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+                  <span className="text-gray-700">Environmental impact & CO₂ emissions comparison</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+                  <span className="text-gray-700">Save and compare multiple scenarios</span>
+                </div>
+              </div>
+              <button 
+                onClick={() => setCurrentSection('tco-calculator')}
+                className="bg-gradient-to-r from-green-600 to-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-green-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 inline-flex items-center justify-center gap-2"
+              >
+                <Calculator className="w-5 h-5" />
+                Launch TCO Calculator
+              </button>
+            </div>
+            <div className="relative bg-gray-100 p-0 md:p-0 flex items-stretch justify-center">
+              <img
+                src="/banner.png"
+                alt="Electric Truck TCO Calculator"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-4 right-4">
+                <button
+                  onClick={() => setCurrentSection('tco-calculator')}
+                  className="bg-white/90 backdrop-blur px-4 py-2 rounded-md text-sm font-medium text-gray-900 shadow hover:bg-white"
+                >
+                  Open Calculator
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1142,11 +1209,14 @@ function App() {
         return <LoginSection />;
       case 'register':
         return <RegisterSection />;
+      case 'tco-calculator':
+        return <TCOCalculator />;
       default:
         return (
           <>
             <HeroSection />
             <StatsSection />
+            <TCOCalculatorPromo />
             <ServicesSection />
             <KnowledgeHubSection />
             <PartnerSection />

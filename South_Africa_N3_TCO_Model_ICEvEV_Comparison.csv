@@ -1,0 +1,30 @@
+DIESEL VS ELECTRIC COMPARISON,,,,,,
+,,,,,,
+COST PER KM,,,,,,
+Component,Diesel,Electric,Savings,,,
+Energy cost/km,='Diesel Analysis'!B6,='Electric Analysis'!B6,=B5-C5,,,
+Capital cost/km,='Diesel Analysis'!B18,='Electric Analysis'!B20,=B6-C6,,,
+Other costs/km,='Diesel Analysis'!B21,='Electric Analysis'!B23,=B7-C7,,,
+TOTAL COST/KM,='Diesel Analysis'!B28,='Electric Analysis'!B30,=B8-C8,,,
+Savings %,,=D8/B8,,,,
+,,,,,,
+ANNUAL COSTS,,,,,,
+Metric,Diesel,Electric,Savings,,,
+Per truck,='Diesel Analysis'!B31,='Electric Analysis'!B33,=B13-C13,,,
+All trucks,=B13*Inputs!B28,=C13*Inputs!B28,=B14-C14,,,
+,,,,,,
+LIFETIME COSTS,,,,,,
+Metric,Diesel,Electric,Savings,,,
+Per truck,='Diesel Analysis'!B34,='Electric Analysis'!B34,=B18-C18,,,
+All trucks,=B18*Inputs!B28,=C18*Inputs!B28,=B19-C19,,,
+,,,,,,
+KEY METRICS,Euro Diesel truck,Chinese Diesel Truck,,Electric charged,Electric swapped,Electric BaaS
+Lifetime cost,='Diesel Analysis'!B34,='Diesel Analysis'!C34,,='Electric Analysis'!B36,='Electric Analysis'!C36,='Electric Analysis'!D36
+CPK during loan period,='Diesel Analysis'!B28,='Diesel Analysis'!C28,,='Electric Analysis'!B30,='Electric Analysis'!C30,='Electric Analysis'!D30
+CPK over lifespan,='Diesel Analysis'!B35,='Diesel Analysis'!C35,,='Electric Analysis'!B37,='Electric Analysis'!C37,='Electric Analysis'!D37
+CPK Difference from Euro Diesel truck Rand,,,,=E24-B24,=F24-B24,=G24-B24
+CPK Difference from Euro Diesel truck %,,,,=E25/B24,=F25/B24,=G25/B24
+CPK Difference from Chinese Diesel truck Rand,,,,=E24-C24,=F24-C24,=G24-C24
+CPK Difference from Chinese Diesel truck %,,,,=E27/C24,=F27/C24,=G27/C24
+Lifetime Difference from Euro Diesel truck Rand,,,,,=F22-B22,=G22-B22
+Lifetime Difference from Chinese Diesel truck Rand,,,,,=F22-C22,=G22-C22

@@ -1,0 +1,37 @@
+ELECTRIC TRUCK COST ANALYSIS,,,
+,Electric charged,Electric swapped,Electric BaaS
+1. ENERGY COST,,,
+Electricity consumption (kWh per km),=Inputs!E39,=Inputs!F39,=Inputs!G39
+Electricity price (Rand per kWh),=Inputs!E40,=Inputs!F40,=Inputs!G40+(D7/D9)
+ENERGY COST PER KM (Rand),=B4*B5,=C4*C5,=D4*D5
+Battery as a Service per year (costed into elect),,,=Inputs!G36/Inputs!G35*'Electric Analysis'!D16*1.1
+ENERGY COST PER YEAR ,=B6*B18,=C6*C18,=D6*D18
+Energy usage per year (kWh),=B18*B4,=C18*C4,=D18*D4
+,,,
+2. CAPITAL COST,,,
+Purchase price (Rand),=Inputs!E35,=Inputs!F35,=Inputs!G35
+Residual value (Rand),=B12*Inputs!E47,=C12*Inputs!E47,=D12*Inputs!E47
+PV of residual value,=B13/((1+Inputs!E44)^Inputs!E45),=C13/((1+Inputs!E44)^Inputs!E45),=D13/((1+Inputs!E44)^Inputs!E45)
+Financed amount,=B12-B14,=C12-C14,=D12-D14
+Annual loan payment,=B15*(Inputs!$E44*(1+Inputs!$E44)^Inputs!$E45)/((1+Inputs!$E44)^Inputs!$E45-1),=C15*(Inputs!$E44*(1+Inputs!$E44)^Inputs!$E45)/((1+Inputs!$E44)^Inputs!$E45-1),=D15*(Inputs!$E44*(1+Inputs!$E44)^Inputs!$E45)/((1+Inputs!$E44)^Inputs!$E45-1)
+Total loan payments,=B16*Inputs!E45,=C16*Inputs!E45,=D16*Inputs!G45
+Annual km,=Inputs!E62,=Inputs!F62,=Inputs!G62
+Total lifetime km,=B18*Inputs!B52,=C18*Inputs!B52,=D18*Inputs!B52
+CAPITAL COST PER KM (Rand),=B16/B18,=C16/C18,=D16/D18
+,,,
+3. OTHER COSTS,,,
+OTHER COSTS PER KM (Rand),=Inputs!B23,=Inputs!B23,=Inputs!B23
+OTHER COSTS PER YEAR (Rand),=B23*B18,=C23*C18,=D23*D18
+,,,
+TOTAL COST PER KM,,,
+Energy cost per km,=B6,=C6,=D6
+Capital cost per km,=B20,=C20,=D20
+Other costs per km,=B23,=C23,=D23
+TOTAL COST PER KM in loan period (Rand),=B27+B28+B29,=C27+C28+C29,=D27+D28+D29
+,,,
+ANNUAL AND LIFETIME COSTS,,,
+Annual cost in finance period (Rand),=B8+B16+B24,=C16+C24+C8,=D16+D24+D8
+Annual cost post finance period (Rand),=B8+B24,=C8+C24,=D8+D24
+End of finance settlement,=B13,=C13,=D13
+Lifetime cost (Rand),=(B33*Inputs!$E45)+((Inputs!$E46-Inputs!$E45)*B34)+B13,=(C33*Inputs!F45)+((Inputs!F46-Inputs!F45)*C34)+C13,=(D33*Inputs!G45)+((Inputs!G46-Inputs!G45)*D34)+D13
+TCO CPK,=B36/B19,=C36/C19,=D36/D19

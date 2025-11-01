@@ -1,0 +1,35 @@
+DIESEL TRUCK COST ANALYSIS,,
+,Diesel truck,Chinese Diesel Truck
+1. ENERGY COST,,
+Fuel consumption (liters per km),=1/Inputs!C39,=1/Inputs!D39
+Diesel price (Rand per liter),=Inputs!C40,=Inputs!D40
+ENERGY COST PER KM (Rand),=B4*B5,=C4*C5
+ENERGY COST PER YEAR (Rand),=B6*Inputs!C62,=C6*Inputs!D62
+,,
+2. CAPITAL COST PER KM,,
+Purchase price (Rand),=Inputs!C35,=Inputs!D35
+Residual value (Rand),=B10*Inputs!C47,=C10*Inputs!C47
+PV of residual value,=B11/((1+Inputs!C44)^Inputs!C45),=C11/((1+Inputs!D44)^Inputs!D45)
+Financed amount (Rand),=B10-B12,=C10-C12
+Annual loan payment (Rand),=B13*(Inputs!C44*(1+Inputs!C44)^Inputs!C45)/((1+Inputs!C44)^Inputs!C45-1),=C13*(Inputs!D44*(1+Inputs!D44)^Inputs!D45)/((1+Inputs!D44)^Inputs!D45-1)
+Total loan payments,=B14*Inputs!C45,=C14*Inputs!D45
+Annual km,=Inputs!C62,=Inputs!D62
+Total lifetime km,=B16*Inputs!B52,=C16*Inputs!B52
+CAPITAL COST PER KM (Rand),=B14/B16,=C14/C16
+,,
+3. OTHER COSTS ,,
+OTHER COSTS PER KM (Rand),=Inputs!B23,=B21
+OTHER COSTS PER YEAR (Rand),=B21*B16,=C21*C16
+,,
+TOTAL COST PER KM IN LOAN PERIOD,,
+Energy cost per km,=B6,=C6
+Capital cost per km,=B18,=C18
+Other costs per km,=B21,=C21
+TOTAL COST PER KM in loan period (Rand),=B25+B26+B27,=C25+C26+C27
+,,
+ANNUAL AND LIFETIME COSTS,,
+Annual cost in finance period (Rand),=B14+B22+B7,=C14+C22+C7
+Annual cost post finance period (Rand),=B7+B22,=C7+C22
+End of finance settlement,=B11,=C11
+Lifetime cost (Rand),=(B31*Inputs!C45)+((Inputs!C46-Inputs!C45)*B32)+B11,=(C31*Inputs!D45)+((Inputs!D46-Inputs!D45)*C32)+C11
+TCO CPK,=B34/(B16*Inputs!C46),=C34/(C16*Inputs!D46)
