@@ -64,12 +64,12 @@ export default function TCOInputForm({ initialInputs, onCalculate, onBack }) {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="bg-white rounded-2xl shadow-2xl ring-1 ring-black/5 p-4 md:p-6">
+      <div className="bg-white rounded-2xl shadow-2xl ring-1 ring-black/5 p-3 md:p-6">
       <form onSubmit={handleSubmit}>
         {/* Header */}
         <Card className="mb-4 border-0 shadow-none">
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
               <div>
                 <CardTitle className="flex items-center gap-2">
                   <Settings className="w-5 h-5 text-blue-600" />
@@ -79,7 +79,7 @@ export default function TCOInputForm({ initialInputs, onCalculate, onBack }) {
                   {inputs.corridorName} • Currency: {inputs.currencySymbol} ({inputs.currency})
                 </CardDescription>
               </div>
-              <Button type="button" variant="outline" onClick={onBack}>
+              <Button type="button" variant="outline" onClick={onBack} className="w-full sm:w-auto">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back
               </Button>
@@ -97,11 +97,11 @@ export default function TCOInputForm({ initialInputs, onCalculate, onBack }) {
 
         {/* Input Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 sticky top-4 z-10 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/50">
-            <TabsTrigger value="corridor">Corridor & Finance</TabsTrigger>
-            <TabsTrigger value="diesel">Diesel Trucks</TabsTrigger>
-            <TabsTrigger value="electric">Electric Trucks</TabsTrigger>
-            <TabsTrigger value="review">Review & Calculate</TabsTrigger>
+          <TabsList className="w-full sticky top-4 z-10 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/50 overflow-x-auto whitespace-nowrap flex md:grid md:grid-cols-4">
+            <TabsTrigger className="px-3 py-2 text-sm" value="corridor">Corridor & Finance</TabsTrigger>
+            <TabsTrigger className="px-3 py-2 text-sm" value="diesel">Diesel Trucks</TabsTrigger>
+            <TabsTrigger className="px-3 py-2 text-sm" value="electric">Electric Trucks</TabsTrigger>
+            <TabsTrigger className="px-3 py-2 text-sm" value="review">Review & Calculate</TabsTrigger>
           </TabsList>
 
           {/* Corridor & Financial Parameters */}

@@ -121,17 +121,17 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
       {/* Header with Actions */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
             <div>
               <CardTitle className="text-2xl">TCO Analysis Results</CardTitle>
               <CardDescription className="mt-1">
                 {results.corridorName} • {new Date(results.timestamp).toLocaleDateString()}
               </CardDescription>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 w-full sm:w-auto flex-wrap">
               <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="outline">
+                  <Button variant="outline" className="w-full sm:w-auto">
                     <Save className="w-4 h-4 mr-2" />
                     Save
                   </Button>
@@ -161,15 +161,15 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
                   </div>
                 </DialogContent>
               </Dialog>
-              <Button variant="outline" onClick={handlePrint}>
+              <Button variant="outline" onClick={handlePrint} className="w-full sm:w-auto">
                 <Download className="w-4 h-4 mr-2" />
                 Print/PDF
               </Button>
-              <Button variant="outline" onClick={onRecalculate}>
+              <Button variant="outline" onClick={onRecalculate} className="w-full sm:w-auto">
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Adjust Inputs
               </Button>
-              <Button variant="destructive" onClick={onReset}>
+              <Button variant="destructive" onClick={onReset} className="w-full sm:w-auto">
                 New Calculation
               </Button>
             </div>
@@ -238,7 +238,7 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
 
       {/* Detailed Results Tabs */}
       <Tabs defaultValue="comparison" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="w-full overflow-x-auto whitespace-nowrap flex md:grid md:grid-cols-4">
           <TabsTrigger value="comparison">Cost Comparison</TabsTrigger>
           <TabsTrigger value="breakdown">Detailed Breakdown</TabsTrigger>
           <TabsTrigger value="environmental">Environmental Impact</TabsTrigger>

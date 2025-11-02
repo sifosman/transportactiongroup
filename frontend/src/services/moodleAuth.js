@@ -4,7 +4,9 @@
  */
 
 const MOODLE_URL = import.meta.env.VITE_MOODLE_URL || 'https://learning.transportactiongroup.com';
-const API_BASE = import.meta.env.VITE_API_BASE || 'https://api.transportactiongroup.com';
+// API_BASE should point to the Moodle plugin endpoints root, e.g.
+// https://learning.transportactiongroup.com/local/tco/endpoints
+const API_BASE = import.meta.env.VITE_API_BASE || 'https://learning.transportactiongroup.com/local/tco/endpoints';
 
 /**
  * Check if user is authenticated with Moodle
@@ -12,7 +14,7 @@ const API_BASE = import.meta.env.VITE_API_BASE || 'https://api.transportactiongr
  */
 export async function checkMoodleAuth() {
   try {
-    const response = await fetch(`${API_BASE}/auth/check`, {
+    const response = await fetch(`${API_BASE}/auth_check.php`, {
       method: 'GET',
       credentials: 'include', // Include cookies for session
       headers: {
@@ -60,10 +62,7 @@ export function loginWithMoodle(returnUrl = window.location.href) {
  */
 export async function logoutFromMoodle() {
   try {
-    await fetch(`${API_BASE}/auth/logout`, {
-      method: 'POST',
-      credentials: 'include',
-    });
+    // No API call needed; redirect to Moodle logout clears the session cookie.
     // Redirect to Moodle logout
     window.location.href = `${MOODLE_URL}/login/logout.php`;
   } catch (error) {
@@ -78,7 +77,7 @@ export async function logoutFromMoodle() {
  */
 export async function saveCalculation(calculation) {
   try {
-    const response = await fetch(`${API_BASE}/tco/save`, {
+    const response = await fetch(`${API_BASE}/tco_save.php`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -113,7 +112,7 @@ export async function saveCalculation(calculation) {
  */
 export async function getCalculationHistory(limit = 10) {
   try {
-    const response = await fetch(`${API_BASE}/tco/history?limit=${limit}`, {
+    const response = await fetch(`${API_BASE}/tco_history.php?limit=${limit}`, {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -140,7 +139,7 @@ export async function getCalculationHistory(limit = 10) {
  */
 export async function deleteCalculation(calculationId) {
   try {
-    const response = await fetch(`${API_BASE}/tco/delete/${calculationId}`, {
+    const response = await fetch(`${API_BASE}/tco_delete.php?id=${encodeURIComponent(calculationId)}`, {
       method: 'DELETE',
       credentials: 'include',
     });
@@ -160,7 +159,7 @@ export async function deleteCalculation(calculationId) {
  */
 export async function updateCalculationNotes(calculationId, notes) {
   try {
-    const response = await fetch(`${API_BASE}/tco/update/${calculationId}`, {
+    const response = await fetch(`${API_BASE}/tco_update.php?id=${encodeURIComponent(calculationId)}`, {
       method: 'PATCH',
       credentials: 'include',
       headers: {

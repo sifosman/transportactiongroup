@@ -21,6 +21,22 @@ export default function TCOCalculator() {
   const [savedCalculations, setSavedCalculations] = useState([]);
   const [serverCalculations, setServerCalculations] = useState([]);
 
+  // Load a calculation from server history
+  const handleLoadServerCalculation = (calc) => {
+    try {
+      const serverInputs = calc?.inputs || null;
+      const serverResults = calc?.results || null;
+      if (serverInputs && serverResults) {
+        setInputs(serverInputs);
+        setResults(serverResults);
+        setSelectedCorridor(calc.corridor || null);
+        setStep('results');
+      }
+    } catch (e) {
+      console.error('Failed to load server calculation', e);
+    }
+  };
+
   // Corridor options
   const corridors = [
     {
@@ -337,7 +353,7 @@ export default function TCOCalculator() {
               </AlertDescription>
             </Alert>
 
-            {/* Saved Calculations */}
+            {/* Saved Calculations (Local) */}
             {savedCalculations.length > 0 && (
               <Card className="mt-8">
                 <CardHeader>
@@ -371,6 +387,44 @@ export default function TCOCalculator() {
                         <Button variant="ghost" size="sm">
                           View
                         </Button>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Server Calculations (Account) */}
+            {isAuthenticated && serverCalculations && serverCalculations.length > 0 && (
+              <Card className="mt-8">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-blue-600" />
+                    Your Saved Calculations
+                  </CardTitle>
+                  <CardDescription>
+                    These are saved to your TAG LMS account
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {serverCalculations.slice(0, 10).map((calc) => (
+                      <div
+                        key={calc.id}
+                        className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
+                      >
+                        <div className="min-w-0">
+                          <p className="font-medium truncate">{calc.name || 'Untitled Calculation'}</p>
+                          <p className="text-sm text-gray-600 truncate">
+                            {calc.timecreated ? new Date(calc.timecreated * 1000).toLocaleString() : ''}
+                            {calc.inputs?.corridorName ? ` • ${calc.inputs.corridorName}` : ''}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 ml-4 shrink-0">
+                          <Button variant="secondary" size="sm" onClick={() => handleLoadServerCalculation(calc)}>
+                            Load
+                          </Button>
+                        </div>
                       </div>
                     ))}
                   </div>
