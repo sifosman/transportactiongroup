@@ -3,6 +3,7 @@ import './App.css';
 import { Search, Users, BookOpen, Award, Truck, Leaf, Building, Globe, Star, Download, Eye, MapPin, Calendar, Clock, CheckCircle, User, Mail, Lock, Phone, FileText, Upload, Calculator } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './components/ui/dialog.jsx';
 import TCOCalculator from './components/TCOCalculator.jsx';
+import { useAuth } from './hooks/useAuth.jsx';
 
 // Import assets
 import tagLogo from './assets/TAGhiresblack.png';
@@ -10,6 +11,7 @@ import roadFreightCover from './assets/road_freight_sustainability_cover.png';
 import truckDriverCover from './assets/truck_driver_handbook_cover.png';
 
 function App() {
+  const { isAuthenticated, user, login, logout, isLoading } = useAuth();
   const [currentSection, setCurrentSection] = useState('home');
   const [showRegistry, setShowRegistry] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -399,34 +401,31 @@ function App() {
           </div>
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-4">
-              <button onClick={() => scrollToSection('home')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-green-600">
-                Home
-              </button>
-              <button onClick={() => scrollToSection('services')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600">
-                Services
-              </button>
-              <button onClick={() => scrollToSection('knowledge')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-orange-600">
-                Knowledge Hub
-              </button>
-              <button onClick={() => scrollToSection('partner')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-purple-600">
-                Partner with Us
-              </button>
-              <button onClick={() => scrollToSection('books')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-teal-600">
-                Books
-              </button>
-              <button onClick={() => scrollToSection('search')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-pink-600">
-                Search Professionals
-              </button>
+              <button onClick={() => scrollToSection('home')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-green-600">Home</button>
+              <button onClick={() => scrollToSection('services')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600">Services</button>
+              <button onClick={() => scrollToSection('knowledge')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-orange-600">Knowledge Hub</button>
+              <button onClick={() => scrollToSection('partner')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-purple-600">Partner with Us</button>
+              <button onClick={() => scrollToSection('books')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-teal-600">Books</button>
               <button onClick={() => setCurrentSection('tco-calculator')} className={`px-3 py-2 rounded-md text-sm font-medium ${currentSection === 'tco-calculator' ? 'bg-green-100 text-green-700' : 'text-gray-700 hover:text-green-600'}`}>
                 <Calculator className="w-4 h-4 inline mr-1" />
                 TCO Calculator
               </button>
-              <button onClick={() => setCurrentSection('login')} className={`px-3 py-2 rounded-md text-sm font-medium ${currentSection === 'login' ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:text-indigo-600'}`}>
-                Login
-              </button>
-              <button onClick={() => setCurrentSection('register')} className={`px-3 py-2 rounded-md text-sm font-medium ${currentSection === 'register' ? 'bg-red-100 text-red-700' : 'text-gray-700 hover:text-red-600'}`}>
-                Register
-              </button>
+              {!isLoading && !isAuthenticated && (
+                <>
+                  <button onClick={() => setCurrentSection('login')} className={`px-3 py-2 rounded-md text-sm font-medium ${currentSection === 'login' ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:text-indigo-600'}`}>Login</button>
+                  <button onClick={() => setCurrentSection('register')} className={`px-3 py-2 rounded-md text-sm font-medium ${currentSection === 'register' ? 'bg-red-100 text-red-700' : 'text-gray-700 hover:text-red-600'}`}>Register</button>
+                </>
+              )}
+              {!isLoading && isAuthenticated && (
+                <button
+                  onClick={() => window.open(import.meta.env.VITE_MOODLE_URL || 'https://learning.transportactiongroup.com', '_blank')}
+                  className="px-3 py-2 rounded-full border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 inline-flex items-center gap-2"
+                  title={user?.firstname ? `Logged in as ${user.firstname}` : 'My Account'}
+                >
+                  <User className="w-4 h-4" />
+                  <span className="hidden lg:inline">{user?.firstname || 'Account'}</span>
+                </button>
+              )}
             </div>
           </div>
         </div>

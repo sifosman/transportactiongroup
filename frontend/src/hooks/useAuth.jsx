@@ -8,21 +8,45 @@ export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Check authentication status on mount
-  useEffect(() => {
-    async function checkAuth() {
-      try {
-        const { isAuthenticated, user } = await checkMoodleAuth();
-        setIsAuthenticated(isAuthenticated);
-        setUser(user);
-      } catch (error) {
-        console.error('Auth check error:', error);
-      } finally {
-        setIsLoading(false);
-      }
+  // Core auth check
+  const runAuthCheck = async () => {
+    try {
+      const { isAuthenticated: ok, user: u } = await checkMoodleAuth();
+      setIsAuthenticated(!!ok);
+      setUser(u || null);
+    } catch (error) {
+      console.error('Auth check error:', error);
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    checkAuth();
+  // Initial check + light retry; re-check on focus/visibility change
+  useEffect(() => {
+    let cancelled = false;
+    const init = async () => {
+      await runAuthCheck();
+      // If not authenticated on first try, retry once after a short delay (handles race after redirects)
+      if (!cancelled && !isAuthenticated) {
+        setTimeout(() => {
+          if (!cancelled) runAuthCheck();
+        }, 800);
+      }
+    };
+    init();
+
+    const onFocus = () => runAuthCheck();
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') runAuthCheck();
+    };
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onVisibility);
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
   }, []);
 
   const login = () => {

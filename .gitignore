@@ -7,8 +7,6 @@ frontend/.next/
 frontend/.nuxt/
 
 # Package manager caches
-frontend/pnpm-lock.yaml
-frontend/yarn.lock
 # keep lockfile? If you prefer, remove this ignore to track the lockfile
 
 # Env files

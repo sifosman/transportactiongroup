@@ -21,17 +21,69 @@ export default function TCOCalculator() {
   const [savedCalculations, setSavedCalculations] = useState([]);
   const [serverCalculations, setServerCalculations] = useState([]);
 
+  // Compute results from inputs
+  const computeResults = (formInputs) => {
+    // Calculate diesel results
+    const euroDieselResults = calculateDieselAnalysis(formInputs, 'euro');
+    const chineseDieselResults = calculateDieselAnalysis(formInputs, 'chinese');
+
+    // Calculate electric results
+    const electricChargedResults = calculateElectricAnalysis(formInputs, 'charged');
+    const electricSwappedResults = calculateElectricAnalysis(formInputs, 'swapped');
+    const electricBaaSResults = calculateElectricAnalysis(formInputs, 'baas');
+
+    // Generate comparisons
+    const comparisonVsEuro = generateComparison(euroDieselResults, electricChargedResults);
+    const comparisonVsChinese = generateComparison(chineseDieselResults, electricChargedResults);
+
+    // Calculate break-even
+    const breakEven = calculateBreakEven(euroDieselResults, electricChargedResults, formInputs);
+
+    // Calculate environmental impact
+    const environmental = calculateEnvironmentalImpact(euroDieselResults, electricChargedResults);
+
+    return {
+      diesel: {
+        euro: euroDieselResults,
+        chinese: chineseDieselResults
+      },
+      electric: {
+        charged: electricChargedResults,
+        swapped: electricSwappedResults,
+        baas: electricBaaSResults
+      },
+      comparisons: {
+        vsEuro: comparisonVsEuro,
+        vsChinese: comparisonVsChinese
+      },
+      breakEven,
+      environmental,
+      timestamp: new Date().toISOString(),
+      corridorName: formInputs.corridorName,
+      currency: formInputs.currency,
+      currencySymbol: formInputs.currencySymbol
+    };
+  };
+
   // Load a calculation from server history
   const handleLoadServerCalculation = (calc) => {
     try {
-      const serverInputs = calc?.inputs || null;
-      const serverResults = calc?.results || null;
-      if (serverInputs && serverResults) {
-        setInputs(serverInputs);
-        setResults(serverResults);
-        setSelectedCorridor(calc.corridor || null);
-        setStep('results');
+      // Parse if stored as strings
+      const parsedInputs = typeof calc?.inputs === 'string' ? JSON.parse(calc.inputs) : calc?.inputs;
+      let parsedResults = typeof calc?.results === 'string' ? JSON.parse(calc.results) : calc?.results;
+
+      if (!parsedInputs) return;
+
+      // If results missing expected structure, recompute from inputs
+      const hasStructure = parsedResults && parsedResults.diesel && parsedResults.diesel.euro && parsedResults.electric && parsedResults.electric.charged;
+      if (!hasStructure) {
+        parsedResults = computeResults(parsedInputs);
       }
+
+      setInputs(parsedInputs);
+      setResults(parsedResults);
+      setSelectedCorridor(calc.corridor || null);
+      setStep('results');
     } catch (e) {
       console.error('Failed to load server calculation', e);
     }
@@ -88,48 +140,7 @@ export default function TCOCalculator() {
   // Handle calculation
   const handleCalculate = (formInputs) => {
     setInputs(formInputs);
-    
-    // Calculate diesel results
-    const euroDieselResults = calculateDieselAnalysis(formInputs, 'euro');
-    const chineseDieselResults = calculateDieselAnalysis(formInputs, 'chinese');
-    
-    // Calculate electric results
-    const electricChargedResults = calculateElectricAnalysis(formInputs, 'charged');
-    const electricSwappedResults = calculateElectricAnalysis(formInputs, 'swapped');
-    const electricBaaSResults = calculateElectricAnalysis(formInputs, 'baas');
-    
-    // Generate comparisons
-    const comparisonVsEuro = generateComparison(euroDieselResults, electricChargedResults);
-    const comparisonVsChinese = generateComparison(chineseDieselResults, electricChargedResults);
-    
-    // Calculate break-even
-    const breakEven = calculateBreakEven(euroDieselResults, electricChargedResults, formInputs);
-    
-    // Calculate environmental impact
-    const environmental = calculateEnvironmentalImpact(euroDieselResults, electricChargedResults);
-    
-    const calculationResults = {
-      diesel: {
-        euro: euroDieselResults,
-        chinese: chineseDieselResults
-      },
-      electric: {
-        charged: electricChargedResults,
-        swapped: electricSwappedResults,
-        baas: electricBaaSResults
-      },
-      comparisons: {
-        vsEuro: comparisonVsEuro,
-        vsChinese: comparisonVsChinese
-      },
-      breakEven,
-      environmental,
-      timestamp: new Date().toISOString(),
-      corridorName: formInputs.corridorName,
-      currency: formInputs.currency,
-      currencySymbol: formInputs.currencySymbol
-    };
-    
+    const calculationResults = computeResults(formInputs);
     setResults(calculationResults);
     setStep('results');
   };
