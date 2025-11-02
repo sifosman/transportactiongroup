@@ -21,6 +21,22 @@ export default function TCOCalculator() {
   const [savedCalculations, setSavedCalculations] = useState([]);
   const [serverCalculations, setServerCalculations] = useState([]);
 
+  // Shallow deep merge for plain objects
+  const deepMerge = (base, override) => {
+    if (!override || typeof override !== 'object') return base;
+    const out = Array.isArray(base) ? [...base] : { ...base };
+    for (const k of Object.keys(override)) {
+      const bv = base?.[k];
+      const ov = override[k];
+      if (ov && typeof ov === 'object' && !Array.isArray(ov)) {
+        out[k] = deepMerge(bv || {}, ov);
+      } else {
+        out[k] = ov;
+      }
+    }
+    return out;
+  };
+
   // Compute results from inputs
   const computeResults = (formInputs) => {
     // Calculate diesel results
@@ -74,15 +90,21 @@ export default function TCOCalculator() {
 
       if (!parsedInputs) return;
 
+      // Establish corridor id and defaults
+      const corridorId = calc.corridor || parsedInputs.corridor || null;
+      const defaults = corridorId ? getDefaultInputs(corridorId) : getDefaultInputs('south-africa');
+      // Merge server inputs into defaults to ensure required fields exist
+      const mergedInputs = deepMerge(defaults, parsedInputs);
+
       // If results missing expected structure, recompute from inputs
       const hasStructure = parsedResults && parsedResults.diesel && parsedResults.diesel.euro && parsedResults.electric && parsedResults.electric.charged;
       if (!hasStructure) {
-        parsedResults = computeResults(parsedInputs);
+        parsedResults = computeResults(mergedInputs);
       }
 
-      setInputs(parsedInputs);
+      setInputs(mergedInputs);
       setResults(parsedResults);
-      setSelectedCorridor(calc.corridor || null);
+      setSelectedCorridor(corridorId);
       setStep('results');
     } catch (e) {
       console.error('Failed to load server calculation', e);
@@ -135,6 +157,7 @@ export default function TCOCalculator() {
     const defaultInputs = getDefaultInputs(corridorId);
     setInputs(defaultInputs);
     setStep('inputs');
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch {}
   };
 
   // Handle calculation
@@ -143,6 +166,7 @@ export default function TCOCalculator() {
     const calculationResults = computeResults(formInputs);
     setResults(calculationResults);
     setStep('results');
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch {}
   };
 
   // Save calculation
