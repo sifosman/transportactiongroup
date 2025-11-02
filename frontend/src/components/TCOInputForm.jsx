@@ -96,7 +96,14 @@ export default function TCOInputForm({ initialInputs, onCalculate, onBack }) {
         </Alert>
 
         {/* Input Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => {
+            setActiveTab(v);
+            try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch {}
+          }}
+          className="space-y-6"
+        >
           <TabsList className="w-full sticky top-4 z-10 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/50 overflow-x-auto whitespace-nowrap flex md:grid md:grid-cols-4">
             <TabsTrigger className="px-3 py-2 text-sm" value="corridor">Corridor & Finance</TabsTrigger>
             <TabsTrigger className="px-3 py-2 text-sm" value="diesel">Diesel Trucks</TabsTrigger>
@@ -557,7 +564,10 @@ export default function TCOInputForm({ initialInputs, onCalculate, onBack }) {
               onClick={() => {
                 const tabs = ['corridor', 'diesel', 'electric', 'review'];
                 const currentIndex = tabs.indexOf(activeTab);
-                if (currentIndex > 0) setActiveTab(tabs[currentIndex - 1]);
+                if (currentIndex > 0) {
+                  setActiveTab(tabs[currentIndex - 1]);
+                  try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch {}
+                }
               }}
               disabled={activeTab === 'corridor'}
             >
@@ -569,7 +579,10 @@ export default function TCOInputForm({ initialInputs, onCalculate, onBack }) {
                 onClick={() => {
                   const tabs = ['corridor', 'diesel', 'electric', 'review'];
                   const currentIndex = tabs.indexOf(activeTab);
-                  if (currentIndex < tabs.length - 1) setActiveTab(tabs[currentIndex + 1]);
+                  if (currentIndex < tabs.length - 1) {
+                    setActiveTab(tabs[currentIndex + 1]);
+                    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch {}
+                  }
                 }}
               >
                 Next
