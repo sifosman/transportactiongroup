@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import { Search, Users, BookOpen, Award, Truck, Leaf, Building, Globe, Star, Download, Eye, MapPin, Calendar, Clock, CheckCircle, User, Mail, Lock, Phone, FileText, Upload, Calculator } from 'lucide-react';
+import { Search, Users, BookOpen, Award, Truck, Leaf, Building, Globe, Star, Download, Eye, MapPin, Calendar, Clock, CheckCircle, User, Mail, Lock, Phone, FileText, Upload, Calculator, Menu, X } from 'lucide-react';
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './components/ui/dialog.jsx';
 import TCOCalculator from './components/TCOCalculator.jsx';
 import { useAuth } from './hooks/useAuth.jsx';
@@ -13,6 +14,8 @@ import truckDriverCover from './assets/truck_driver_handbook_cover.png';
 function App() {
   const { isAuthenticated, user, login, logout, isLoading } = useAuth();
   const [currentSection, setCurrentSection] = useState('home');
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   const [showRegistry, setShowRegistry] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [loginForm, setLoginForm] = useState({ email: '', password: '' });
@@ -392,6 +395,13 @@ function App() {
     }
   };
 
+  // Navigate to homepage then scroll to a specific section
+  const goToFrontSection = (sectionId) => {
+    setCurrentSection('home');
+    // Wait for home to render, then scroll
+    setTimeout(() => scrollToSection(sectionId), 0);
+  };
+
   const Navigation = () => (
     <nav className="bg-white shadow-lg sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -399,13 +409,15 @@ function App() {
           <div className="flex items-center">
             <img src={tagLogo} alt="TAG Logo" className="h-16 w-auto" />
           </div>
+          {/* Desktop nav */}
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-4">
               <button onClick={() => { setCurrentSection('home'); scrollToSection('home'); }} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-green-600">Home</button>
-              <button onClick={() => scrollToSection('services')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600">Services</button>
-              <button onClick={() => scrollToSection('knowledge')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-orange-600">Knowledge Hub</button>
-              <button onClick={() => scrollToSection('partner')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-purple-600">Partner with Us</button>
-              <button onClick={() => scrollToSection('books')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-teal-600">Books</button>
+              <button onClick={() => goToFrontSection('services')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600">Services</button>
+              <button onClick={() => goToFrontSection('knowledge')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-orange-600">Knowledge Hub</button>
+              <button onClick={() => goToFrontSection('partner')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-purple-600">Partner with Us</button>
+              <button onClick={() => goToFrontSection('books')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-teal-600">Books</button>
+              <button onClick={() => goToFrontSection('search')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-pink-600">Search Professionals</button>
               <button onClick={() => { setCurrentSection('tco-calculator'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`px-3 py-2 rounded-md text-sm font-medium ${currentSection === 'tco-calculator' ? 'bg-green-100 text-green-700' : 'text-gray-700 hover:text-green-600'}`}>
                 <Calculator className="w-4 h-4 inline mr-1" />
                 TCO Calculator
@@ -428,7 +440,49 @@ function App() {
               )}
             </div>
           </div>
+          {/* Mobile hamburger */}
+          <div className="md:hidden">
+            <button
+              aria-label="Open Menu"
+              className="p-2 rounded-md border border-gray-200 text-gray-700"
+              onClick={() => setMobileOpen(v => !v)}
+            >
+              {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
+        {/* Mobile menu panel */}
+        {mobileOpen && (
+          <div className="md:hidden py-3 border-t border-gray-100">
+            <div className="flex flex-col gap-2">
+              <button onClick={() => { setMobileOpen(false); setCurrentSection('home'); scrollToSection('home'); }} className="text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Home</button>
+              <button onClick={() => { setMobileOpen(false); goToFrontSection('services'); }} className="text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Services</button>
+              <button onClick={() => { setMobileOpen(false); goToFrontSection('knowledge'); }} className="text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Knowledge Hub</button>
+              <button onClick={() => { setMobileOpen(false); goToFrontSection('partner'); }} className="text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Partner with Us</button>
+              <button onClick={() => { setMobileOpen(false); goToFrontSection('books'); }} className="text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Books</button>
+              <button onClick={() => { setMobileOpen(false); goToFrontSection('search'); }} className="text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Search Professionals</button>
+              <button onClick={() => { setMobileOpen(false); setCurrentSection('tco-calculator'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">TCO Calculator</button>
+              {!isLoading && !isAuthenticated && (
+                <div className="flex gap-2 px-3 pt-2">
+                  <button onClick={() => { setMobileOpen(false); setCurrentSection('login'); }} className="flex-1 px-3 py-2 rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">Login</button>
+                  <button onClick={() => { setMobileOpen(false); setCurrentSection('register'); }} className="flex-1 px-3 py-2 rounded-md text-sm font-medium text-white bg-red-600 hover:bg-red-700">Register</button>
+                </div>
+              )}
+              {!isLoading && isAuthenticated && (
+                <div className="px-3 pt-2">
+                  <button
+                    onClick={() => { setMobileOpen(false); window.open(import.meta.env.VITE_MOODLE_URL || 'https://learning.transportactiongroup.com', '_blank'); }}
+                    className="w-full px-3 py-2 rounded-full border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 inline-flex items-center justify-center gap-2"
+                    title={user?.firstname ? `Logged in as ${user.firstname}` : 'My Account'}
+                  >
+                    <User className="w-4 h-4" />
+                    <span>{user?.firstname || 'Account'}</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );

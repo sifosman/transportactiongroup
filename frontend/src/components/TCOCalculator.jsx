@@ -10,7 +10,7 @@ import TCOInputForm from './TCOInputForm';
 import TCOResults from './TCOResults';
 import { getDefaultInputs, calculateDieselAnalysis, calculateElectricAnalysis, generateComparison, calculateBreakEven, calculateEnvironmentalImpact } from '../utils/tcoCalculations';
 import { useAuth } from '../hooks/useAuth';
-import { saveCalculation, getCalculationHistory, deleteCalculation } from '../services/moodleAuth';
+import { saveCalculation, getCalculationHistory, deleteCalculation, getMoodleSignupUrl } from '../services/moodleAuth';
 
 export default function TCOCalculator() {
   const { user, isAuthenticated, isLoading, login, logout } = useAuth();
@@ -267,13 +267,23 @@ export default function TCOCalculator() {
             <Alert className="bg-blue-50 border-blue-200">
               <LogIn className="h-4 w-4 text-blue-600" />
               <AlertTitle className="text-blue-900">Sign in to save your calculations</AlertTitle>
-              <AlertDescription className="flex items-center justify-between">
+              <AlertDescription className="flex items-center justify-between gap-2 flex-wrap">
                 <span className="text-blue-800">
                   Create an account or sign in with your Moodle LMS credentials to save calculation history, add notes, and access your results from anywhere.
                 </span>
-                <Button onClick={login} size="sm" className="ml-4 bg-blue-600 hover:bg-blue-700 shrink-0">
-                  Sign In
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button onClick={login} size="sm" className="bg-blue-600 hover:bg-blue-700 shrink-0">
+                    Sign In
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.open(getMoodleSignupUrl(), '_blank')}
+                    className="shrink-0"
+                  >
+                    Register
+                  </Button>
+                </div>
               </AlertDescription>
             </Alert>
           )}

@@ -43,9 +43,8 @@ export async function checkMoodleAuth() {
  * @returns {string}
  */
 export function getMoodleLoginUrl(returnUrl = window.location.href) {
-  const params = new URLSearchParams({
-    returnurl: returnUrl,
-  });
+  // Moodle uses 'wantsurl' for post-login redirect
+  const params = new URLSearchParams({ wantsurl: returnUrl });
   return `${MOODLE_URL}/login/index.php?${params.toString()}`;
 }
 
@@ -55,6 +54,13 @@ export function getMoodleLoginUrl(returnUrl = window.location.href) {
  */
 export function loginWithMoodle(returnUrl = window.location.href) {
   window.location.href = getMoodleLoginUrl(returnUrl);
+}
+
+/**
+ * Get Moodle signup URL (opens Moodle account creation)
+ */
+export function getMoodleSignupUrl() {
+  return `${MOODLE_URL}/login/signup.php`;
 }
 
 /**
