@@ -10,7 +10,7 @@ import TCOInputForm from './TCOInputForm';
 import TCOResults from './TCOResults';
 import { getDefaultInputs, calculateDieselAnalysis, calculateElectricAnalysis, generateComparison, calculateBreakEven, calculateEnvironmentalImpact } from '../utils/tcoCalculations';
 import { useAuth } from '../hooks/useAuth';
-import { saveCalculation, getCalculationHistory, deleteCalculation, getMoodleSignupUrl } from '../services/moodleAuth';
+import { saveCalculation, getCalculationHistory, deleteCalculation, getMoodleSignupUrl, getCalculatorReturnUrl } from '../services/moodleAuth';
 
 export default function TCOCalculator() {
   const { user, isAuthenticated, isLoading, login, logout } = useAuth();
@@ -272,7 +272,7 @@ export default function TCOCalculator() {
                   Create an account or sign in with your Moodle LMS credentials to save calculation history, add notes, and access your results from anywhere.
                 </span>
                 <div className="flex items-center gap-2">
-                  <Button onClick={login} size="sm" className="bg-blue-600 hover:bg-blue-700 shrink-0">
+                  <Button onClick={() => login(getCalculatorReturnUrl())} size="sm" className="bg-blue-600 hover:bg-blue-700 shrink-0">
                     Sign In
                   </Button>
                   <Button

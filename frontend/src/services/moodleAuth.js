@@ -64,6 +64,25 @@ export function getMoodleSignupUrl() {
 }
 
 /**
+ * Helper: return URL pointing back to calculator section
+ */
+export function getCalculatorReturnUrl() {
+  try {
+    const base = window.location.origin;
+    return `${base}/#tco-calculator`;
+  } catch {
+    return window.location.href;
+  }
+}
+
+/**
+ * Helper: Moodle dashboard URL
+ */
+export function getMoodleDashboardUrl() {
+  return `${MOODLE_URL}/my/`;
+}
+
+/**
  * Logout from Moodle
  */
 export async function logoutFromMoodle() {

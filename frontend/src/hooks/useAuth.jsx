@@ -49,8 +49,8 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
-  const login = () => {
-    loginWithMoodle();
+  const login = (returnUrl) => {
+    loginWithMoodle(returnUrl);
   };
 
   const logout = async () => {
