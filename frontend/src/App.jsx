@@ -3,7 +3,7 @@ import './App.css';
 import { Search, Users, BookOpen, Award, Truck, Leaf, Building, Globe, Star, Download, Eye, MapPin, Calendar, Clock, CheckCircle, User, Mail, Lock, Phone, FileText, Upload, Calculator, Menu, X } from 'lucide-react';
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './components/ui/dialog.jsx';
-import { getMoodleDashboardUrl } from './services/moodleAuth.js';
+import { getMoodleDashboardUrl, getMoodleSignupUrl } from './services/moodleAuth.js';
 import TCOCalculator from './components/TCOCalculator.jsx';
 import { useAuth } from './hooks/useAuth.jsx';
 
@@ -426,7 +426,7 @@ function App() {
               {!isLoading && !isAuthenticated && (
                 <>
                   <button onClick={() => { login(getMoodleDashboardUrl()); }} className={`px-3 py-2 rounded-md text-sm font-medium ${currentSection === 'login' ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:text-indigo-600'}`}>Login</button>
-                  <button onClick={() => setCurrentSection('register')} className={`px-3 py-2 rounded-md text-sm font-medium ${currentSection === 'register' ? 'bg-red-100 text-red-700' : 'text-gray-700 hover:text-red-600'}`}>Register</button>
+                  <button onClick={() => window.open(getMoodleSignupUrl(), '_blank')} className={`px-3 py-2 rounded-md text-sm font-medium ${currentSection === 'register' ? 'bg-red-100 text-red-700' : 'text-gray-700 hover:text-red-600'}`}>Register</button>
                 </>
               )}
               {!isLoading && isAuthenticated && (
@@ -466,7 +466,7 @@ function App() {
               {!isLoading && !isAuthenticated && (
                 <div className="flex gap-2 px-3 pt-2">
                   <button onClick={() => { setMobileOpen(false); login(getMoodleDashboardUrl()); }} className="flex-1 px-3 py-2 rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">Login</button>
-                  <button onClick={() => { setMobileOpen(false); setCurrentSection('register'); }} className="flex-1 px-3 py-2 rounded-md text-sm font-medium text-white bg-red-600 hover:bg-red-700">Register</button>
+                  <button onClick={() => { setMobileOpen(false); window.open(getMoodleSignupUrl(), '_blank'); }} className="flex-1 px-3 py-2 rounded-md text-sm font-medium text-white bg-red-600 hover:bg-red-700">Register</button>
                 </div>
               )}
               {!isLoading && isAuthenticated && (
