@@ -512,6 +512,15 @@ function App() {
             Refund Policy
           </button>
         </div>
+        <div className="mt-6 flex justify-center">
+          <button
+            onClick={() => { setCurrentSection('tco-calculator'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            className="inline-flex items-center gap-2 px-10 py-3 rounded-full font-semibold text-white bg-gradient-to-r from-green-600 via-blue-600 to-green-500 hover:from-green-700 hover:via-blue-700 hover:to-green-600 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
+          >
+            <Calculator className="w-5 h-5" />
+            <span>Open TCO Calculator</span>
+          </button>
+        </div>
         {/* Contact details snippet from refund policy */}
         {(contactInfo.emails.length > 0 || contactInfo.address) && (
           <div className="mt-8 text-sm text-gray-700 max-w-2xl mx-auto">
