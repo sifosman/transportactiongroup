@@ -415,10 +415,10 @@ function App() {
             <div className="ml-10 flex items-baseline space-x-4">
               <button onClick={() => { setCurrentSection('home'); scrollToSection('home'); }} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-green-600">Home</button>
               <button onClick={() => goToFrontSection('services')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600">Services</button>
-              <button onClick={() => goToFrontSection('knowledge')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-orange-600">Knowledge Hub</button>
-              <button onClick={() => goToFrontSection('partner')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-purple-600">Partner with Us</button>
-              <button onClick={() => goToFrontSection('books')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-teal-600">Books</button>
-              <button onClick={() => goToFrontSection('search')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-pink-600">Search Professionals</button>
+              <button onClick={() => goToFrontSection('knowledge')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600">Knowledge Hub</button>
+              <button onClick={() => goToFrontSection('partner')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-green-600">Partner with Us</button>
+              <button onClick={() => goToFrontSection('books')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-green-600">Books</button>
+              <button onClick={() => goToFrontSection('search')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600">Search Professionals</button>
               <button onClick={() => { setCurrentSection('tco-calculator'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`px-3 py-2 rounded-md text-sm font-medium ${currentSection === 'tco-calculator' ? 'bg-green-100 text-green-700' : 'text-gray-700 hover:text-green-600'}`}>
                 <Calculator className="w-4 h-4 inline mr-1" />
                 TCO Calculator
@@ -426,7 +426,7 @@ function App() {
               {!isLoading && !isAuthenticated && (
                 <>
                   <button onClick={() => { login(getMoodleDashboardUrl()); }} className={`px-3 py-2 rounded-md text-sm font-medium ${currentSection === 'login' ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:text-indigo-600'}`}>Login</button>
-                  <button onClick={() => { window.location.href = getMoodleSignupUrl(); }} className={`px-3 py-2 rounded-md text-sm font-medium ${currentSection === 'register' ? 'bg-red-100 text-red-700' : 'text-gray-700 hover:text-red-600'}`}>Register</button>
+                  <button onClick={() => { window.location.href = getMoodleSignupUrl(); }} className={`px-3 py-2 rounded-md text-sm font-medium ${currentSection === 'register' ? 'bg-green-100 text-green-700' : 'text-gray-700 hover:text-green-600'}`}>Register</button>
                 </>
               )}
               {!isLoading && isAuthenticated && (
@@ -466,7 +466,7 @@ function App() {
               {!isLoading && !isAuthenticated && (
                 <div className="flex gap-2 px-3 pt-2">
                   <button onClick={() => { setMobileOpen(false); login(getMoodleDashboardUrl()); }} className="flex-1 px-3 py-2 rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">Login</button>
-                  <button onClick={() => { setMobileOpen(false); window.location.href = getMoodleSignupUrl(); }} className="flex-1 px-3 py-2 rounded-md text-sm font-medium text-white bg-red-600 hover:bg-red-700">Register</button>
+                  <button onClick={() => { setMobileOpen(false); window.location.href = getMoodleSignupUrl(); }} className="flex-1 px-3 py-2 rounded-md text-sm font-medium text-white bg-green-600 hover:bg-green-700">Register</button>
                 </div>
               )}
               {!isLoading && isAuthenticated && (
@@ -502,10 +502,10 @@ function App() {
           <button onClick={() => scrollToSection('services')} className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
             Explore Our Services
           </button>
-          <button onClick={() => scrollToSection('knowledge')} className="bg-red-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors">
+          <button onClick={() => scrollToSection('knowledge')} className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
             Access Knowledge Hub
           </button>
-          <button onClick={() => scrollToSection('partner')} className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+          <button onClick={() => scrollToSection('partner')} className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
             Partner with Us
           </button>
           <button onClick={() => setRefundOpen(true)} className="bg-gray-900 text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors">
@@ -551,14 +551,14 @@ function App() {
             <div className="text-3xl font-bold text-green-600">42</div>
             <div className="text-gray-600">Certifications Issued</div>
           </div>
-          <div className="text-center p-6 bg-purple-50 rounded-lg">
-            <Globe className="w-12 h-12 text-purple-600 mx-auto mb-4" />
-            <div className="text-3xl font-bold text-purple-600">5</div>
+          <div className="text-center p-6 bg-blue-50 rounded-lg">
+            <Globe className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+            <div className="text-3xl font-bold text-blue-600">5</div>
             <div className="text-gray-600">South African Provinces</div>
           </div>
-          <div className="text-center p-6 bg-orange-50 rounded-lg">
-            <Leaf className="w-12 h-12 text-orange-600 mx-auto mb-4" />
-            <div className="text-3xl font-bold text-orange-600">25%</div>
+          <div className="text-center p-6 bg-green-50 rounded-lg">
+            <Leaf className="w-12 h-12 text-green-600 mx-auto mb-4" />
+            <div className="text-3xl font-bold text-green-600">25%</div>
             <div className="text-gray-600">Average Emission Reduction</div>
           </div>
         </div>
@@ -567,7 +567,7 @@ function App() {
   );
 
   const TCOCalculatorPromo = () => (
-    <div className="py-16 bg-gradient-to-br from-green-50 via-blue-50 to-purple-50">
+    <div className="py-16 bg-gradient-to-br from-green-50 via-blue-50 to-green-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
           <div className="grid md:grid-cols-2 gap-0">
@@ -647,12 +647,12 @@ function App() {
             <p className="text-gray-600">Developing comprehensive green freight programs including corridor assessments and sustainability frameworks.</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-lg">
-            <Truck className="w-12 h-12 text-purple-600 mb-4" />
+            <Truck className="w-12 h-12 text-blue-600 mb-4" />
             <h3 className="text-xl font-semibold mb-3">Road Freight Electrification</h3>
             <p className="text-gray-600">Strategic transition planning towards electric vehicle adoption in commercial freight operations.</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-lg">
-            <BookOpen className="w-12 h-12 text-orange-600 mb-4" />
+            <BookOpen className="w-12 h-12 text-green-600 mb-4" />
             <h3 className="text-xl font-semibold mb-3">Skills Development</h3>
             <p className="text-gray-600">Professional training programs for management, executives, and drivers in sustainable freight operations.</p>
           </div>
@@ -705,36 +705,36 @@ function App() {
           </div>
 
           {/* Green Freight Professional Program */}
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-8 rounded-lg shadow-lg">
+          <div className="bg-gradient-to-br from-blue-50 to-green-50 p-8 rounded-lg shadow-lg">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">Road Freight Managers Green Freight Professional Program</h3>
             <p className="text-gray-600 mb-6">Advanced certification for fleet managers and executives</p>
             <div className="flex items-center justify-between mb-6">
-              <div className="text-3xl font-bold text-purple-600">$199</div>
+              <div className="text-3xl font-bold text-blue-600">$199</div>
               <div className="text-sm text-gray-500">One-time fee</div>
             </div>
             <div className="flex items-center gap-4 mb-6">
               <div className="flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-purple-600" />
+                <BookOpen className="w-5 h-5 text-blue-600" />
                 <span className="text-sm">20 modules</span>
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-purple-600" />
+                <Clock className="w-5 h-5 text-blue-600" />
                 <span className="text-sm">300 minutes</span>
               </div>
             </div>
             <div className="mb-6">
               <h4 className="font-semibold mb-3">What's Included:</h4>
               <ul className="space-y-2 text-sm">
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-purple-600" /> 20 interactive video modules</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-purple-600" /> Module evaluations (5 questions each)</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-purple-600" /> Free online evaluation system</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-purple-600" /> Free downloadable certificate</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-purple-600" /> 1-year free registry listing</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-purple-600" /> Professional profile creation</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-purple-600" /> CV generation tools</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-blue-600" /> 20 interactive video modules</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-blue-600" /> Module evaluations (5 questions each)</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-blue-600" /> Free online evaluation system</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-blue-600" /> Free downloadable certificate</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-blue-600" /> 1-year free registry listing</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-blue-600" /> Professional profile creation</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-blue-600" /> CV generation tools</li>
               </ul>
             </div>
-            <a href="https://learning.transportactiongroup.com/enrol/index.php?id=3" className="w-full inline-block text-center bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors">
+            <a href="https://learning.transportactiongroup.com/enrol/index.php?id=3" className="w-full inline-block text-center bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
               Enrol: Green Freight Program
             </a>
           </div>
@@ -774,7 +774,7 @@ function App() {
             </ul>
           </div>
           <div className="bg-white p-8 rounded-lg shadow-lg">
-            <Truck className="w-12 h-12 text-purple-600 mb-4" />
+            <Truck className="w-12 h-12 text-blue-600 mb-4" />
             <h3 className="text-xl font-semibold mb-4">Fleet-Level Programs</h3>
             <p className="text-gray-600 mb-6">Comprehensive transformation programs combining management Green Freight Training and Eco driver training.</p>
             <ul className="space-y-2 text-sm text-gray-600">
@@ -881,8 +881,8 @@ function App() {
             <div className="text-gray-600">Certified Drivers</div>
           </div>
           <div className="text-center p-6 bg-white rounded-lg shadow-lg">
-            <Building className="w-12 h-12 text-purple-600 mx-auto mb-4" />
-            <div className="text-3xl font-bold text-purple-600">10</div>
+            <Building className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+            <div className="text-3xl font-bold text-blue-600">10</div>
             <div className="text-gray-600">Certified Managers</div>
           </div>
         </div>
