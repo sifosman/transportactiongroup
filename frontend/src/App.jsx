@@ -419,9 +419,12 @@ function App() {
               <button onClick={() => goToFrontSection('partner')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-green-600">Partner with Us</button>
               <button onClick={() => goToFrontSection('books')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-green-600">Books</button>
               <button onClick={() => goToFrontSection('search')} className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600">Search Professionals</button>
-              <button onClick={() => { setCurrentSection('tco-calculator'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`px-3 py-2 rounded-md text-sm font-medium ${currentSection === 'tco-calculator' ? 'bg-green-100 text-green-700' : 'text-gray-700 hover:text-green-600'}`}>
-                <Calculator className="w-4 h-4 inline mr-1" />
-                TCO Calculator
+              <button
+                onClick={() => { setCurrentSection('tco-calculator'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                className={`inline-flex items-center gap-1 px-4 py-2 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-green-600 via-blue-600 to-green-500 hover:from-green-700 hover:via-blue-700 hover:to-green-600 transition-all transform ${currentSection === 'tco-calculator' ? 'shadow-xl -translate-y-0.5' : 'shadow-md hover:-translate-y-0.5 hover:shadow-lg'}`}
+              >
+                <Calculator className="w-4 h-4" />
+                <span>TCO Calculator</span>
               </button>
               {!isLoading && !isAuthenticated && (
                 <>
@@ -515,7 +518,7 @@ function App() {
         <div className="mt-6 flex justify-center">
           <button
             onClick={() => { setCurrentSection('tco-calculator'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-            className="inline-flex items-center gap-2 px-10 py-3 rounded-full font-semibold text-white bg-gradient-to-r from-green-600 via-blue-600 to-green-500 hover:from-green-700 hover:via-blue-700 hover:to-green-600 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
+            className="inline-flex items-center gap-2 px-10 py-3 rounded-lg font-semibold text-white bg-gradient-to-r from-green-600 via-blue-600 to-green-500 hover:from-green-700 hover:via-blue-700 hover:to-green-600 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
           >
             <Calculator className="w-5 h-5" />
             <span>Open TCO Calculator</span>
