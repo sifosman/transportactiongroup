@@ -498,6 +498,11 @@ export default function TCOCalculator() {
             onSave={handleSaveCalculation}
             onReset={handleReset}
             onRecalculate={() => setStep('inputs')}
+            onInputChange={(updatedInputs) => {
+              setInputs(updatedInputs);
+              const newResults = computeResults(updatedInputs);
+              setResults(newResults);
+            }}
           />
         )}
       </div>

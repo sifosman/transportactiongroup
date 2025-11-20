@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Download, RefreshCw, Save, TrendingDown, TrendingUp, Leaf, BarChart3, DollarSign, Calendar, Fuel, Zap, Battery, BatteryCharging, Repeat, Globe, Flag, Award, TrendingDown as ArrowDown, TrendingUp as ArrowUp } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Download, RefreshCw, Save, TrendingDown, TrendingUp, Leaf, BarChart3, DollarSign, Calendar, Fuel, Zap, Battery, BatteryCharging, Repeat, Globe, Flag, Award, TrendingDown as ArrowDown, TrendingUp as ArrowUp, Settings } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -24,10 +24,17 @@ import {
   Cell
 } from 'recharts';
 
-export default function TCOResults({ results, inputs, onSave, onReset, onRecalculate }) {
+export default function TCOResults({ results, inputs, onSave, onReset, onRecalculate, onInputChange }) {
   const [saveName, setSaveName] = useState('');
   const [saveNotes, setSaveNotes] = useState('');
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
+  const [showAdjustments, setShowAdjustments] = useState(false);
+  const [liveInputs, setLiveInputs] = useState(inputs);
+  
+  // Update live inputs when props change
+  useEffect(() => {
+    setLiveInputs(inputs);
+  }, [inputs]);
 
   const { diesel, electric, comparisons, breakEven, environmental, currencySymbol } = results;
 
@@ -242,9 +249,17 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
                 <Download className="w-4 h-4 mr-2" />
                 Print/PDF
               </Button>
+              <Button 
+                variant={showAdjustments ? "default" : "outline"} 
+                onClick={() => setShowAdjustments(!showAdjustments)} 
+                className="w-full sm:w-auto"
+              >
+                <Settings className="w-4 h-4 mr-2" />
+                {showAdjustments ? 'Hide' : 'Quick'} Adjustments
+              </Button>
               <Button variant="outline" onClick={onRecalculate} className="w-full sm:w-auto">
                 <RefreshCw className="w-4 h-4 mr-2" />
-                Adjust Inputs
+                Full Input Form
               </Button>
               <Button variant="destructive" onClick={onReset} className="w-full sm:w-auto">
                 New Calculation
@@ -417,8 +432,183 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
         </CardContent>
       </Card>
 
+      {/* Live Adjustment Panel */}
+      {showAdjustments && (
+        <Card className="border-2 border-blue-300 bg-blue-50">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Settings className="w-5 h-5 text-blue-600" />
+                <CardTitle>Quick Adjustments</CardTitle>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setShowAdjustments(false)}
+              >
+                Close
+              </Button>
+            </div>
+            <CardDescription>Adjust key parameters and see results update instantly</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-3 gap-4">
+              {/* Diesel Price */}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium flex items-center gap-2">
+                  <Fuel className="w-4 h-4" />
+                  Diesel Price ({liveInputs.currencySymbol}/L)
+                </Label>
+                <Input
+                  type="number"
+                  step="0.1"
+                  value={liveInputs.euroDiesel?.fuelPrice || 18}
+                  onChange={(e) => {
+                    const newValue = parseFloat(e.target.value) || 0;
+                    const updated = {
+                      ...liveInputs,
+                      euroDiesel: { ...liveInputs.euroDiesel, fuelPrice: newValue, price: newValue },
+                      chineseDiesel: { ...liveInputs.chineseDiesel, fuelPrice: newValue, price: newValue }
+                    };
+                    setLiveInputs(updated);
+                    if (onInputChange) onInputChange(updated);
+                  }}
+                  className="w-full"
+                />
+              </div>
+
+              {/* Electricity Price */}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium flex items-center gap-2">
+                  <Zap className="w-4 h-4" />
+                  Electricity Price ({liveInputs.currencySymbol}/kWh)
+                </Label>
+                <Input
+                  type="number"
+                  step="0.1"
+                  value={liveInputs.europeanEV?.electricityPrice || 2.75}
+                  onChange={(e) => {
+                    const newValue = parseFloat(e.target.value) || 0;
+                    const updated = {
+                      ...liveInputs,
+                      europeanEV: { ...liveInputs.europeanEV, electricityPrice: newValue, price: newValue },
+                      chineseEVCharged: { ...liveInputs.chineseEVCharged, electricityPrice: newValue, price: newValue },
+                      chineseEVSwapped: { ...liveInputs.chineseEVSwapped, electricityPrice: newValue, price: newValue },
+                      chineseEVBaaS: { ...liveInputs.chineseEVBaaS, electricityPrice: newValue, price: newValue }
+                    };
+                    setLiveInputs(updated);
+                    if (onInputChange) onInputChange(updated);
+                  }}
+                  className="w-full"
+                />
+              </div>
+
+              {/* Distance */}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium flex items-center gap-2">
+                  <BarChart3 className="w-4 h-4" />
+                  Distance One-Way (km)
+                </Label>
+                <Input
+                  type="number"
+                  step="10"
+                  value={liveInputs.distanceOneWay || 600}
+                  onChange={(e) => {
+                    const newValue = parseFloat(e.target.value) || 0;
+                    const updated = {
+                      ...liveInputs,
+                      distanceOneWay: newValue,
+                      returnTripDistance: newValue * 2
+                    };
+                    setLiveInputs(updated);
+                    if (onInputChange) onInputChange(updated);
+                  }}
+                  className="w-full"
+                />
+              </div>
+
+              {/* Euro Diesel Purchase Price */}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium flex items-center gap-2">
+                  <DollarSign className="w-4 h-4" />
+                  Euro Diesel Price ({liveInputs.currencySymbol})
+                </Label>
+                <Input
+                  type="number"
+                  step="10000"
+                  value={liveInputs.euroDiesel?.purchasePrice || 2200000}
+                  onChange={(e) => {
+                    const newValue = parseFloat(e.target.value) || 0;
+                    const updated = {
+                      ...liveInputs,
+                      euroDiesel: { ...liveInputs.euroDiesel, purchasePrice: newValue }
+                    };
+                    setLiveInputs(updated);
+                    if (onInputChange) onInputChange(updated);
+                  }}
+                  className="w-full"
+                />
+              </div>
+
+              {/* European EV Purchase Price */}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium flex items-center gap-2">
+                  <DollarSign className="w-4 h-4" />
+                  European EV Price ({liveInputs.currencySymbol})
+                </Label>
+                <Input
+                  type="number"
+                  step="10000"
+                  value={liveInputs.europeanEV?.purchasePrice || 6500000}
+                  onChange={(e) => {
+                    const newValue = parseFloat(e.target.value) || 0;
+                    const updated = {
+                      ...liveInputs,
+                      europeanEV: { ...liveInputs.europeanEV, purchasePrice: newValue },
+                      electricCharged: { ...liveInputs.electricCharged, purchasePrice: newValue }
+                    };
+                    setLiveInputs(updated);
+                    if (onInputChange) onInputChange(updated);
+                  }}
+                  className="w-full"
+                />
+              </div>
+
+              {/* Interest Rate */}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4" />
+                  Interest Rate (%)
+                </Label>
+                <Input
+                  type="number"
+                  step="0.1"
+                  value={(liveInputs.interestRate || 0.105) * 100}
+                  onChange={(e) => {
+                    const newValue = parseFloat(e.target.value) / 100 || 0;
+                    const updated = {
+                      ...liveInputs,
+                      interestRate: newValue,
+                      euroDiesel: { ...liveInputs.euroDiesel, interestRate: newValue },
+                      chineseDiesel: { ...liveInputs.chineseDiesel, interestRate: newValue },
+                      europeanEV: { ...liveInputs.europeanEV, interestRate: newValue },
+                      chineseEVCharged: { ...liveInputs.chineseEVCharged, interestRate: newValue },
+                      chineseEVSwapped: { ...liveInputs.chineseEVSwapped, interestRate: newValue },
+                      chineseEVBaaS: { ...liveInputs.chineseEVBaaS, interestRate: newValue }
+                    };
+                    setLiveInputs(updated);
+                    if (onInputChange) onInputChange(updated);
+                  }}
+                  className="w-full"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Detailed Results Tabs */}
-      <Tabs defaultValue="comparison" className="space-y-4">
+      <Tabs defaultValue="breakdown" className="space-y-4">
         <TabsList className="w-full overflow-x-auto whitespace-nowrap flex md:grid md:grid-cols-4">
           <TabsTrigger value="comparison">Cost Comparison</TabsTrigger>
           <TabsTrigger value="breakdown">Detailed Breakdown</TabsTrigger>
