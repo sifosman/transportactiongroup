@@ -348,7 +348,8 @@ export function getDefaultInputs(corridor = 'south-africa') {
   
   const corridor_info = corridorDefaults[corridor] || corridorDefaults['south-africa'];
   
-  return {
+  // Base structure using new naming scheme
+  const base = {
     corridor: corridor,
     corridorName: corridor_info.name,
     currency: corridor_info.currency,
@@ -535,5 +536,30 @@ export function getDefaultInputs(corridor = 'south-africa') {
       truckImportPercent: 1,
       chargeEquipmentImportPercent: 0.7
     }
+  };
+
+  // Backward-compatible aliases for existing components and saved data
+  // These mirror the new structures so references like inputs.electricCharged.* still work.
+  return {
+    ...base,
+    electricCharged: {
+      purchasePrice: base.europeanEV.purchasePrice,
+      consumption: base.europeanEV.consumption,
+      price: base.europeanEV.electricityPrice,
+      tripsPerMonth: base.europeanEV.tripsPerMonth,
+    },
+    electricSwapped: {
+      purchasePrice: base.chineseEVSwapped.purchasePrice,
+      consumption: base.chineseEVSwapped.consumption,
+      price: base.chineseEVSwapped.electricityPrice,
+      tripsPerMonth: base.chineseEVSwapped.tripsPerMonth,
+    },
+    electricBaaS: {
+      purchasePrice: base.chineseEVBaaS.purchasePrice,
+      batteryPrice: base.chineseEVBaaS.batteryPrice,
+      consumption: base.chineseEVBaaS.consumption,
+      price: base.chineseEVBaaS.electricityPrice,
+      tripsPerMonth: base.chineseEVBaaS.tripsPerMonth,
+    },
   };
 }
