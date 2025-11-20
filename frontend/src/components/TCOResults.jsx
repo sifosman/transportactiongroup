@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Download, RefreshCw, Save, TrendingDown, TrendingUp, Leaf, BarChart3, DollarSign, Calendar } from 'lucide-react';
+import { Download, RefreshCw, Save, TrendingDown, TrendingUp, Leaf, BarChart3, DollarSign, Calendar, Fuel, Zap, Battery, BatteryCharging, Repeat, Globe, Flag, Award, TrendingDown as ArrowDown, TrendingUp as ArrowUp } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -47,6 +47,62 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
     electric: '#10b981',
     euro: '#f59e0b',
     chinese: '#8b5cf6'
+  };
+
+  // Truck type configurations with icons and visual styling
+  const truckTypes = {
+    diesel: {
+      euro: { 
+        icon: Fuel, 
+        label: 'Euro Diesel', 
+        color: 'text-orange-600', 
+        bgColor: 'bg-orange-50', 
+        borderColor: 'border-orange-200',
+        badge: { text: '🇪🇺 European', color: 'bg-blue-100 text-blue-800' }
+      },
+      chinese: { 
+        icon: Fuel, 
+        label: 'Chinese Diesel', 
+        color: 'text-purple-600', 
+        bgColor: 'bg-purple-50', 
+        borderColor: 'border-purple-200',
+        badge: { text: '🇨🇳 Chinese', color: 'bg-purple-100 text-purple-800' }
+      }
+    },
+    electric: {
+      europeanEV: { 
+        icon: Zap, 
+        label: 'European EV', 
+        color: 'text-green-600', 
+        bgColor: 'bg-green-50', 
+        borderColor: 'border-green-200',
+        badge: { text: '🇪🇺 European • Charged', color: 'bg-green-100 text-green-800' }
+      },
+      chineseEVCharged: { 
+        icon: BatteryCharging, 
+        label: 'Chinese EV', 
+        color: 'text-emerald-600', 
+        bgColor: 'bg-emerald-50', 
+        borderColor: 'border-emerald-200',
+        badge: { text: '🇨🇳 Chinese • Charged', color: 'bg-emerald-100 text-emerald-800' }
+      },
+      chineseEVSwapped: { 
+        icon: Repeat, 
+        label: 'Chinese EV', 
+        color: 'text-teal-600', 
+        bgColor: 'bg-teal-50', 
+        borderColor: 'border-teal-200',
+        badge: { text: '🇨🇳 Chinese • Swapped', color: 'bg-teal-100 text-teal-800' }
+      },
+      chineseEVBaaS: { 
+        icon: Battery, 
+        label: 'Chinese EV', 
+        color: 'text-cyan-600', 
+        bgColor: 'bg-cyan-50', 
+        borderColor: 'border-cyan-200',
+        badge: { text: '🇨🇳 Chinese • BaaS', color: 'bg-cyan-100 text-cyan-800' }
+      }
+    }
   };
 
   // Prepare chart data
@@ -200,62 +256,166 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
 
       {/* Key Findings Summary */}
       <div className="grid md:grid-cols-4 gap-4">
-        <Card className="border-green-200 bg-green-50">
+        <Card className="border-green-200 bg-gradient-to-br from-green-50 to-green-100">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Lifetime Savings</CardTitle>
+            <div className="flex items-center gap-2">
+              <TrendingDown className="w-5 h-5 text-green-600" />
+              <CardTitle className="text-sm font-medium text-gray-600">Lifetime Savings</CardTitle>
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-700">
-              {formatCurrency(comparisons.vsEuro.lifetimeCosts.savings)}
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold text-green-700">
+                  {formatCurrency(comparisons.vsEuro.lifetimeCosts.savings)}
+                </div>
+                <p className="text-xs text-gray-600 mt-1">
+                  {formatNumber(comparisons.vsEuro.lifetimeCosts.savingsPercent)}% vs Euro Diesel
+                </p>
+              </div>
+              <Award className="w-10 h-10 text-green-300" />
             </div>
-            <p className="text-xs text-gray-600 mt-1">
-              {formatNumber(comparisons.vsEuro.lifetimeCosts.savingsPercent)}% vs Euro Diesel
-            </p>
           </CardContent>
         </Card>
 
-        <Card className="border-blue-200 bg-blue-50">
+        <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Break-Even Period</CardTitle>
+            <div className="flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-blue-600" />
+              <CardTitle className="text-sm font-medium text-gray-600">Break-Even Period</CardTitle>
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-700">
-              {breakEven.years ? `${formatNumber(breakEven.years)} years` : 'N/A'}
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold text-blue-700">
+                  {breakEven.years ? `${formatNumber(breakEven.years)} years` : 'N/A'}
+                </div>
+                <p className="text-xs text-gray-600 mt-1">
+                  {breakEven.years ? `${Math.round(breakEven.months)} months` : breakEven.message}
+                </p>
+              </div>
+              <BarChart3 className="w-10 h-10 text-blue-300" />
             </div>
-            <p className="text-xs text-gray-600 mt-1">
-              {breakEven.years ? `${Math.round(breakEven.months)} months` : breakEven.message}
-            </p>
           </CardContent>
         </Card>
 
-        <Card className="border-purple-200 bg-purple-50">
+        <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Cost per KM</CardTitle>
+            <div className="flex items-center gap-2">
+              <DollarSign className="w-5 h-5 text-purple-600" />
+              <CardTitle className="text-sm font-medium text-gray-600">Cost per KM</CardTitle>
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-700">
-              {formatCurrency(electric.europeanEV.totalCostPerKmLoanPeriod)}
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold text-purple-700">
+                  {formatCurrency(electric.europeanEV.totalCostPerKmLoanPeriod)}
+                </div>
+                <p className="text-xs text-gray-600 mt-1">
+                  Electric vs {formatCurrency(diesel.euro.totalCostPerKmLoanPeriod)} Diesel
+                </p>
+              </div>
+              <Zap className="w-10 h-10 text-purple-300" />
             </div>
-            <p className="text-xs text-gray-600 mt-1">
-              Electric vs {formatCurrency(diesel.euro.totalCostPerKmLoanPeriod)} Diesel
-            </p>
           </CardContent>
         </Card>
 
-        <Card className="border-emerald-200 bg-emerald-50">
+        <Card className="border-emerald-200 bg-gradient-to-br from-emerald-50 to-emerald-100">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">CO₂ Reduction</CardTitle>
+            <div className="flex items-center gap-2">
+              <Leaf className="w-5 h-5 text-emerald-600" />
+              <CardTitle className="text-sm font-medium text-gray-600">CO₂ Reduction</CardTitle>
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-emerald-700">
-              {formatNumber(environmental.lifetime.reductionPercent)}%
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold text-emerald-700">
+                  {formatNumber(environmental.lifetime.reductionPercent)}%
+                </div>
+                <p className="text-xs text-gray-600 mt-1">
+                  {formatNumber(environmental.lifetime.reduction / 1000)} tons over lifetime
+                </p>
+              </div>
+              <Globe className="w-10 h-10 text-emerald-300" />
             </div>
-            <p className="text-xs text-gray-600 mt-1">
-              {formatNumber(environmental.lifetime.reduction / 1000)} tons over lifetime
-            </p>
           </CardContent>
         </Card>
       </div>
+
+      {/* Winner/Best Options Section */}
+      <Card className="border-2 border-yellow-300 bg-gradient-to-br from-yellow-50 to-amber-50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Award className="w-6 h-6 text-yellow-600" />
+            Best Value Options
+          </CardTitle>
+          <CardDescription>Most cost-effective trucks based on your analysis</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid md:grid-cols-3 gap-4">
+            {/* Lowest Cost per KM */}
+            {(() => {
+              const allTrucks = [
+                { type: 'Euro Diesel', cost: diesel.euro.totalCostPerKmLoanPeriod, icon: Fuel, color: 'orange' },
+                { type: 'Chinese Diesel', cost: diesel.chinese.totalCostPerKmLoanPeriod, icon: Fuel, color: 'purple' },
+                { type: 'European EV', cost: electric.europeanEV.totalCostPerKmLoanPeriod, icon: Zap, color: 'green' },
+                { type: 'Chinese EV (Charged)', cost: electric.chineseEVCharged.totalCostPerKmLoanPeriod, icon: BatteryCharging, color: 'emerald' },
+                { type: 'Chinese EV (Swapped)', cost: electric.chineseEVSwapped.totalCostPerKmLoanPeriod, icon: Repeat, color: 'teal' },
+                { type: 'Chinese EV (BaaS)', cost: electric.chineseEVBaaS.totalCostPerKmLoanPeriod, icon: Battery, color: 'cyan' }
+              ];
+              const lowestCost = allTrucks.reduce((min, truck) => truck.cost < min.cost ? truck : min);
+              const Icon = lowestCost.icon;
+              return (
+                <div className={`p-4 bg-${lowestCost.color}-100 border-2 border-${lowestCost.color}-300 rounded-lg`}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Icon className={`w-5 h-5 text-${lowestCost.color}-600`} />
+                    <h3 className="font-bold text-lg">Lowest Cost/km</h3>
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900">{lowestCost.type}</p>
+                  <p className="text-sm text-gray-600 mt-1">{formatCurrency(lowestCost.cost)}/km</p>
+                </div>
+              );
+            })()}
+            
+            {/* Lowest Lifetime Cost */}
+            {(() => {
+              const allTrucks = [
+                { type: 'Euro Diesel', cost: diesel.euro.lifetimeCost, icon: Fuel, color: 'orange' },
+                { type: 'Chinese Diesel', cost: diesel.chinese.lifetimeCost, icon: Fuel, color: 'purple' },
+                { type: 'European EV', cost: electric.europeanEV.lifetimeCost, icon: Zap, color: 'green' },
+                { type: 'Chinese EV (Charged)', cost: electric.chineseEVCharged.lifetimeCost, icon: BatteryCharging, color: 'emerald' },
+                { type: 'Chinese EV (Swapped)', cost: electric.chineseEVSwapped.lifetimeCost, icon: Repeat, color: 'teal' },
+                { type: 'Chinese EV (BaaS)', cost: electric.chineseEVBaaS.lifetimeCost, icon: Battery, color: 'cyan' }
+              ];
+              const lowestLifetime = allTrucks.reduce((min, truck) => truck.cost < min.cost ? truck : min);
+              const Icon = lowestLifetime.icon;
+              return (
+                <div className={`p-4 bg-${lowestLifetime.color}-100 border-2 border-${lowestLifetime.color}-300 rounded-lg`}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Icon className={`w-5 h-5 text-${lowestLifetime.color}-600`} />
+                    <h3 className="font-bold text-lg">Best Lifetime Value</h3>
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900">{lowestLifetime.type}</p>
+                  <p className="text-sm text-gray-600 mt-1">{formatCurrency(lowestLifetime.cost)} total</p>
+                </div>
+              );
+            })()}
+            
+            {/* Most Eco-Friendly */}
+            <div className="p-4 bg-emerald-100 border-2 border-emerald-300 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <Leaf className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-bold text-lg">Most Eco-Friendly</h3>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">All Electric Options</p>
+              <p className="text-sm text-gray-600 mt-1">0 kg CO₂ emissions</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Detailed Results Tabs */}
       <Tabs defaultValue="comparison" className="space-y-4">
@@ -319,14 +479,20 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <DollarSign className="w-5 h-5 text-red-600" />
+                  <Fuel className="w-5 h-5 text-red-600" />
                   Diesel Trucks
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <h4 className="font-semibold mb-2">Euro Diesel</h4>
+                  <div className={`p-4 ${truckTypes.diesel.euro.bgColor} rounded-lg border-2 ${truckTypes.diesel.euro.borderColor}`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <Fuel className={`w-5 h-5 ${truckTypes.diesel.euro.color}`} />
+                        <h4 className="font-semibold text-lg">{truckTypes.diesel.euro.label}</h4>
+                      </div>
+                      <Badge className={truckTypes.diesel.euro.badge.color}>{truckTypes.diesel.euro.badge.text}</Badge>
+                    </div>
                     <div className="space-y-1 text-sm">
                       <div className="flex justify-between">
                         <span>Energy Cost/km:</span>
@@ -356,8 +522,14 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
                     </div>
                   </div>
                   
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <h4 className="font-semibold mb-2">Chinese Diesel</h4>
+                  <div className={`p-4 ${truckTypes.diesel.chinese.bgColor} rounded-lg border-2 ${truckTypes.diesel.chinese.borderColor}`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <Fuel className={`w-5 h-5 ${truckTypes.diesel.chinese.color}`} />
+                        <h4 className="font-semibold text-lg">{truckTypes.diesel.chinese.label}</h4>
+                      </div>
+                      <Badge className={truckTypes.diesel.chinese.badge.color}>{truckTypes.diesel.chinese.badge.text}</Badge>
+                    </div>
                     <div className="space-y-1 text-sm">
                       <div className="flex justify-between">
                         <span>Total Cost/km:</span>
@@ -380,23 +552,25 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <DollarSign className="w-5 h-5 text-green-600" />
+                  <Zap className="w-5 h-5 text-green-600" />
                   Electric Trucks
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {[
-                    { key: 'europeanEV', label: 'European EV' },
-                    { key: 'chineseEVCharged', label: 'Chinese EV (Charged)' },
-                    { key: 'chineseEVSwapped', label: 'Chinese EV (Swapped)' },
-                    { key: 'chineseEVBaaS', label: 'Chinese EV (BaaS)' }
-                  ].map(({ key, label }) => {
+                  {Object.entries(truckTypes.electric).map(([key, config]) => {
                     const data = electric[key];
                     if (!data) return null;
+                    const Icon = config.icon;
                     return (
-                      <div key={key} className="p-4 bg-green-50 rounded-lg">
-                        <h4 className="font-semibold mb-2">{label}</h4>
+                      <div key={key} className={`p-4 ${config.bgColor} rounded-lg border-2 ${config.borderColor}`}>
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            <Icon className={`w-5 h-5 ${config.color}`} />
+                            <h4 className="font-semibold text-lg">{config.label}</h4>
+                          </div>
+                          <Badge className={config.badge.color}>{config.badge.text}</Badge>
+                        </div>
                         <div className="space-y-1 text-sm">
                           <div className="flex justify-between">
                             <span>Energy Cost/km:</span>
