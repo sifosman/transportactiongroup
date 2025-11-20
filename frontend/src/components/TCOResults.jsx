@@ -54,17 +54,17 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
     {
       name: 'Energy Cost',
       Diesel: diesel.euro.energyCostPerKm,
-      Electric: electric.charged.energyCostPerKm
+      Electric: electric.europeanEV.energyCostPerKm
     },
     {
       name: 'Capital Cost',
       Diesel: diesel.euro.capitalCostPerKm,
-      Electric: electric.charged.capitalCostPerKm
+      Electric: electric.europeanEV.capitalCostPerKm
     },
     {
       name: 'Other Costs',
       Diesel: diesel.euro.otherCostsPerKm,
-      Electric: electric.charged.otherCostsPerKm
+      Electric: electric.europeanEV.otherCostsPerKm
     }
   ];
 
@@ -80,26 +80,47 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
       fill: COLORS.chinese
     },
     {
-      name: 'Electric (Charged)',
-      value: electric.charged.annualCostFinancePeriod,
+      name: 'European EV',
+      value: electric.europeanEV.annualCostFinancePeriod,
       fill: COLORS.electric
+    },
+    {
+      name: 'Chinese EV Charged',
+      value: electric.chineseEVCharged.annualCostFinancePeriod,
+      fill: '#059669'
+    },
+    {
+      name: 'Chinese EV Swapped',
+      value: electric.chineseEVSwapped.annualCostFinancePeriod,
+      fill: '#0d9488'
+    },
+    {
+      name: 'Chinese EV BaaS',
+      value: electric.chineseEVBaaS.annualCostFinancePeriod,
+      fill: '#14b8a6'
     }
   ];
 
   // 10-year projection data
   const yearlyProjection = Array.from({ length: 10 }, (_, i) => {
     const year = i + 1;
-    const dieselAnnual = year <= inputs.loanTerm 
+    const euroDieselAnnual = year <= inputs.euroDiesel?.loanTerm 
       ? diesel.euro.annualCostFinancePeriod 
       : diesel.euro.annualCostPostFinance;
-    const electricAnnual = year <= inputs.loanTerm 
-      ? electric.charged.annualCostFinancePeriod 
-      : electric.charged.annualCostPostFinance;
+    const europeanEVAnnual = year <= inputs.europeanEV?.loanTerm 
+      ? electric.europeanEV.annualCostFinancePeriod 
+      : electric.europeanEV.annualCostPostFinance;
     
     return {
       year: `Year ${year}`,
-      Diesel: dieselAnnual,
-      Electric: electricAnnual
+      'Euro Diesel': euroDieselAnnual,
+      'European EV': europeanEVAnnual,
+      'Chinese EV Charged': year <= inputs.chineseEVCharged?.loanTerm 
+        ? electric.chineseEVCharged.annualCostFinancePeriod 
+        : electric.chineseEVCharged.annualCostPostFinance,
+      'Chinese EV Swapped': year <= inputs.chineseEVSwapped?.loanTerm 
+        ? electric.chineseEVSwapped.annualCostFinancePeriod 
+        : electric.chineseEVSwapped.annualCostPostFinance
     };
   });
 

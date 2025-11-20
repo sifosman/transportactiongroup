@@ -44,19 +44,20 @@ export default function TCOCalculator() {
     const chineseDieselResults = calculateDieselAnalysis(formInputs, 'chinese');
 
     // Calculate electric results
-    const electricChargedResults = calculateElectricAnalysis(formInputs, 'charged');
-    const electricSwappedResults = calculateElectricAnalysis(formInputs, 'swapped');
-    const electricBaaSResults = calculateElectricAnalysis(formInputs, 'baas');
+    const europeanEVResults = calculateElectricAnalysis(formInputs, 'europeanEV');
+    const chineseEVChargedResults = calculateElectricAnalysis(formInputs, 'chineseEVCharged');
+    const chineseEVSwappedResults = calculateElectricAnalysis(formInputs, 'chineseEVSwapped');
+    const chineseEVBaaSResults = calculateElectricAnalysis(formInputs, 'chineseEVBaaS');
 
     // Generate comparisons
-    const comparisonVsEuro = generateComparison(euroDieselResults, electricChargedResults);
-    const comparisonVsChinese = generateComparison(chineseDieselResults, electricChargedResults);
+    const comparisonVsEuro = generateComparison(euroDieselResults, europeanEVResults);
+    const comparisonVsChinese = generateComparison(chineseDieselResults, chineseEVChargedResults);
 
     // Calculate break-even
-    const breakEven = calculateBreakEven(euroDieselResults, electricChargedResults, formInputs);
+    const breakEven = calculateBreakEven(euroDieselResults, europeanEVResults, formInputs);
 
     // Calculate environmental impact
-    const environmental = calculateEnvironmentalImpact(euroDieselResults, electricChargedResults);
+    const environmental = calculateEnvironmentalImpact(euroDieselResults, europeanEVResults);
 
     return {
       diesel: {
@@ -64,9 +65,10 @@ export default function TCOCalculator() {
         chinese: chineseDieselResults
       },
       electric: {
-        charged: electricChargedResults,
-        swapped: electricSwappedResults,
-        baas: electricBaaSResults
+        europeanEV: europeanEVResults,
+        chineseEVCharged: chineseEVChargedResults,
+        chineseEVSwapped: chineseEVSwappedResults,
+        chineseEVBaaS: chineseEVBaaSResults
       },
       comparisons: {
         vsEuro: comparisonVsEuro,
@@ -97,7 +99,7 @@ export default function TCOCalculator() {
       const mergedInputs = deepMerge(defaults, parsedInputs);
 
       // If results missing expected structure, recompute from inputs
-      const hasStructure = parsedResults && parsedResults.diesel && parsedResults.diesel.euro && parsedResults.electric && parsedResults.electric.charged;
+      const hasStructure = parsedResults && parsedResults.diesel && parsedResults.diesel.euro && parsedResults.electric && parsedResults.electric.europeanEV;
       if (!hasStructure) {
         parsedResults = computeResults(mergedInputs);
       }

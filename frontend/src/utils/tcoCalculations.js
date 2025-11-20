@@ -4,40 +4,60 @@
  */
 
 /**
- * Calculate diesel truck analysis
+ * Calculate diesel truck analysis (matches Excel Diesel Analysis sheet)
  */
 export function calculateDieselAnalysis(inputs, truckType = 'euro') {
   const params = truckType === 'euro' ? inputs.euroDiesel : inputs.chineseDiesel;
+  const returnTripDistance = inputs.distanceOneWay * 2;
+  
+  // Calculated values from Inputs sheet
+  const annualKm = returnTripDistance * params.tripsPerMonth * 12; // Monthly trips * 12 months
+  const otherCostsPerKm = ((params.insuranceAnnualPremiumPercent * (params.purchasePrice / 2)) / annualKm) + 
+                          params.maintenanceCostPerKm + params.otherCostsPerKm;
   
   // 1. ENERGY COST
-  const fuelConsumptionPerKm = 1 / params.consumption;
-  const dieselPrice = params.price;
+  const fuelConsumptionPerKm = 1 / params.consumption; // liters per km
+  const dieselPrice = params.fuelPrice;
   const energyCostPerKm = fuelConsumptionPerKm * dieselPrice;
-  const annualKm = inputs.returnTripDistance * params.tripsPerMonth * params.monthsPerYear;
   const energyCostPerYear = energyCostPerKm * annualKm;
   
-  // 2. CAPITAL COST PER KM
+  // 2. CAPITAL COST PER KM IN LOAN PERIOD
   const purchasePrice = params.purchasePrice;
-  const residualValue = purchasePrice * inputs.residualValuePercent;
-  const pvResidualValue = residualValue / Math.pow(1 + inputs.interestRate, inputs.loanTerm);
+  const residualValue = purchasePrice * params.residualValuePercent;
+  const pvResidualValue = residualValue / Math.pow(1 + params.interestRate, params.loanTerm);
   const financedAmount = purchasePrice - pvResidualValue;
   const annualLoanPayment = financedAmount * 
-    (inputs.interestRate * Math.pow(1 + inputs.interestRate, inputs.loanTerm)) / 
-    (Math.pow(1 + inputs.interestRate, inputs.loanTerm) - 1);
-  const totalLifetimeKm = annualKm * inputs.truckLifespan;
+    (params.interestRate * Math.pow(1 + params.interestRate, params.loanTerm)) / 
+    (Math.pow(1 + params.interestRate, params.loanTerm) - 1);
+  const totalLoanRepayments = annualLoanPayment * params.loanTerm;
   const capitalCostPerKm = annualLoanPayment / annualKm;
   
   // 3. OTHER COSTS
-  const otherCostsPerKm = inputs.otherCostsPerKm;
   const otherCostsPerYear = otherCostsPerKm * annualKm;
   
-  // TOTAL COSTS
+  // TOTAL COST PER KM IN LOAN PERIOD
   const totalCostPerKmLoanPeriod = energyCostPerKm + capitalCostPerKm + otherCostsPerKm;
+  const totalCostPerYearLoanPeriod = totalCostPerKmLoanPeriod * annualKm;
+  
+  // TOTAL COST PER KM AFTER LOAN PERIOD
+  const capitalCostPerKmPostLoan = ((params.residualValuePercent - params.endOfLifeValuePercent) * params.purchasePrice) / 
+                                    (annualKm * (inputs.infrastructureLifespan - inputs.infrastructureLoanTerm));
+  const totalCostPerKmPostLoan = energyCostPerKm + capitalCostPerKmPostLoan + otherCostsPerKm;
+  const totalCostPerYearPostLoan = totalCostPerKmPostLoan * annualKm;
+  
+  // ANNUAL AND LIFETIME COSTS
   const annualCostFinancePeriod = annualLoanPayment + otherCostsPerYear + energyCostPerYear;
   const annualCostPostFinance = energyCostPerYear + otherCostsPerYear;
-  const lifetimeCost = (annualCostFinancePeriod * inputs.loanTerm) + 
-    ((inputs.truckLifespan - inputs.loanTerm) * annualCostPostFinance) + residualValue;
+  const endOfLifeValue = params.endOfLifeValuePercent * params.purchasePrice;
+  const lifetimeCost = (annualCostFinancePeriod * params.loanTerm) + 
+                       ((params.lifespan - params.loanTerm) * annualCostPostFinance) - 
+                       endOfLifeValue;
+  const totalLifetimeKm = annualKm * params.lifespan;
   const tcoCpk = lifetimeCost / totalLifetimeKm;
+  
+  // CO2 Emissions
+  const co2PerKm = fuelConsumptionPerKm * params.emissionsFactor;
+  const co2PerYear = (co2PerKm * annualKm) / 1000; // Convert to tonnes
   
   return {
     energyCostPerKm,
@@ -46,79 +66,127 @@ export function calculateDieselAnalysis(inputs, truckType = 'euro') {
     otherCostsPerKm,
     otherCostsPerYear,
     totalCostPerKmLoanPeriod,
+    totalCostPerYearLoanPeriod,
+    capitalCostPerKmPostLoan,
+    totalCostPerKmPostLoan,
+    totalCostPerYearPostLoan,
     annualCostFinancePeriod,
     annualCostPostFinance,
+    endOfLifeValue,
     lifetimeCost,
     tcoCpk,
     annualKm,
     totalLifetimeKm,
     annualLoanPayment,
-    residualValue
+    totalLoanRepayments,
+    residualValue,
+    co2PerKm,
+    co2PerYear
   };
 }
 
 /**
- * Calculate electric truck analysis
+ * Calculate electric truck analysis (matches Excel Electric Analysis sheet)
  */
-export function calculateElectricAnalysis(inputs, truckType = 'charged') {
+export function calculateElectricAnalysis(inputs, truckType = 'europeanEV') {
   let params;
-  if (truckType === 'charged') params = inputs.electricCharged;
-  else if (truckType === 'swapped') params = inputs.electricSwapped;
-  else params = inputs.electricBaaS;
+  if (truckType === 'europeanEV') params = inputs.europeanEV;
+  else if (truckType === 'chineseEVCharged') params = inputs.chineseEVCharged;
+  else if (truckType === 'chineseEVSwapped') params = inputs.chineseEVSwapped;
+  else params = inputs.chineseEVBaaS;
   
-  const annualKm = inputs.returnTripDistance * params.tripsPerMonth * params.monthsPerYear;
+  const returnTripDistance = inputs.distanceOneWay * 2;
+  
+  // Calculated values from Inputs sheet
+  const annualKm = returnTripDistance * params.tripsPerMonth * 12;
+  
+  // Calculate charging time for EV trucks
+  const oneWayTripEnergy = inputs.distanceOneWay * params.consumption;
+  const batteryChargingTime = (oneWayTripEnergy / inputs.corridorChargePower) * 1.2;
+  
+  const otherCostsPerKm = ((params.insuranceAnnualPremiumPercent * (params.purchasePrice / 2)) / annualKm) + 
+                          params.maintenanceCostPerKm + params.otherCostsPerKm;
   
   // 1. ENERGY COST
   const electricityConsumptionPerKm = params.consumption;
-  let electricityPrice = params.price;
-  
-  // For BaaS, add battery service cost to electricity price
-  if (truckType === 'baas') {
-    const batteryServicePerYear = (inputs.electricBaaS.batteryPrice / inputs.electricBaaS.purchasePrice) * annualKm * 1.1;
-    electricityPrice = params.price + (batteryServicePerYear / annualKm);
-  }
-  
+  const electricityPrice = params.electricityPrice;
   const energyCostPerKm = electricityConsumptionPerKm * electricityPrice;
   const energyCostPerYear = energyCostPerKm * annualKm;
+  const energyUsagePerYear = annualKm * electricityConsumptionPerKm;
   
-  // 2. CAPITAL COST
+  // 2. CAPITAL COST PER KM IN LOAN PERIOD
   const purchasePrice = params.purchasePrice;
-  const residualValue = purchasePrice * inputs.residualValuePercent;
-  const pvResidualValue = residualValue / Math.pow(1 + inputs.interestRate, inputs.loanTerm);
+  const residualValue = purchasePrice * params.residualValuePercent;
+  const pvResidualValue = residualValue / Math.pow(1 + params.interestRate, params.loanTerm);
   const financedAmount = purchasePrice - pvResidualValue;
   const annualLoanPayment = financedAmount * 
-    (inputs.interestRate * Math.pow(1 + inputs.interestRate, inputs.loanTerm)) / 
-    (Math.pow(1 + inputs.interestRate, inputs.loanTerm) - 1);
-  const totalLifetimeKm = annualKm * inputs.truckLifespan;
+    (params.interestRate * Math.pow(1 + params.interestRate, params.loanTerm)) / 
+    (Math.pow(1 + params.interestRate, params.loanTerm) - 1);
+  
+  // Battery as a Service calculation (for BaaS only) - calculate after annualLoanPayment
+  const batteryServicePerYear = truckType === 'chineseEVBaaS' 
+    ? (((params.batteryPrice) / (params.purchasePrice + params.batteryPrice)) * annualLoanPayment) * 1.1
+    : 0;
+  const totalLoanRepayments = annualLoanPayment * params.loanTerm;
   const capitalCostPerKm = annualLoanPayment / annualKm;
   
   // 3. OTHER COSTS
-  const otherCostsPerKm = inputs.otherCostsPerKm;
-  const otherCostsPerYear = otherCostsPerKm * annualKm;
+  // For BaaS, add battery service to other costs per km
+  const otherCostsPerKmAdjusted = truckType === 'chineseEVBaaS'
+    ? otherCostsPerKm + (batteryServicePerYear / annualKm)
+    : otherCostsPerKm;
+  const otherCostsPerYear = otherCostsPerKmAdjusted * annualKm;
   
-  // TOTAL COSTS
-  const totalCostPerKmLoanPeriod = energyCostPerKm + capitalCostPerKm + otherCostsPerKm;
-  const annualCostFinancePeriod = energyCostPerYear + annualLoanPayment + otherCostsPerYear;
-  const annualCostPostFinance = energyCostPerYear + otherCostsPerYear;
-  const lifetimeCost = (annualCostFinancePeriod * inputs.loanTerm) + 
-    ((inputs.truckLifespan - inputs.loanTerm) * annualCostPostFinance) + residualValue;
+  // TOTAL COST PER KM IN LOAN PERIOD
+  const totalCostPerKmLoanPeriod = energyCostPerKm + capitalCostPerKm + otherCostsPerKmAdjusted;
+  const totalCostPerYearLoanPeriod = totalCostPerKmLoanPeriod * annualKm;
+  
+  // TOTAL COST PER KM AFTER LOAN PERIOD
+  const capitalCostPerKmPostLoan = ((params.residualValuePercent - params.endOfLifeValuePercent) * params.purchasePrice) / 
+                                    (annualKm * (inputs.infrastructureLifespan - inputs.infrastructureLoanTerm));
+  const totalCostPerKmPostLoan = energyCostPerKm + capitalCostPerKmPostLoan + otherCostsPerKmAdjusted;
+  const totalCostPerYearPostLoan = totalCostPerKmPostLoan * annualKm;
+  
+  // ANNUAL AND LIFETIME COSTS
+  const annualCostFinancePeriod = annualLoanPayment + otherCostsPerYear;
+  const annualCostPostFinance = otherCostsPerYear;
+  const endOfLifeValue = params.endOfLifeValuePercent * params.purchasePrice;
+  const lifetimeCost = (annualCostFinancePeriod * params.loanTerm) + 
+                       ((params.lifespan - params.loanTerm) * annualCostPostFinance) - 
+                       endOfLifeValue;
+  const totalLifetimeKm = annualKm * params.lifespan;
   const tcoCpk = lifetimeCost / totalLifetimeKm;
+  
+  // CO2 Emissions
+  const co2PerKm = electricityConsumptionPerKm * params.emissionsFactor;
+  const co2PerYear = co2PerKm * annualKm; // Already in kg, no conversion needed for zero emissions
   
   return {
     energyCostPerKm,
     energyCostPerYear,
+    energyUsagePerYear,
     capitalCostPerKm,
-    otherCostsPerKm,
+    otherCostsPerKm: otherCostsPerKmAdjusted,
     otherCostsPerYear,
     totalCostPerKmLoanPeriod,
+    totalCostPerYearLoanPeriod,
+    capitalCostPerKmPostLoan,
+    totalCostPerKmPostLoan,
+    totalCostPerYearPostLoan,
     annualCostFinancePeriod,
     annualCostPostFinance,
+    endOfLifeValue,
     lifetimeCost,
     tcoCpk,
     annualKm,
     totalLifetimeKm,
     annualLoanPayment,
-    residualValue
+    totalLoanRepayments,
+    residualValue,
+    co2PerKm,
+    co2PerYear,
+    batteryChargingTime,
+    batteryServicePerYear
   };
 }
 
@@ -285,60 +353,187 @@ export function getDefaultInputs(corridor = 'south-africa') {
     corridorName: corridor_info.name,
     currency: corridor_info.currency,
     currencySymbol: corridor_info.currencySymbol,
+    
+    // Financial Parameters
     exchangeRate: corridor_info.exchangeRate,
+    chargeOutFreightRate: 20, // Rand per km to customer
     
     // Corridor Parameters
     distanceOneWay: corridor_info.distance,
-    returnTripDistance: corridor_info.distance * 2,
-    daysPerYear: 365,
     
-    // Operating Parameters
-    otherCostsPerKm: 6,
+    // Charging Infrastructure
+    numberOfChargingStations: 3,
+    costPerStationInstalled: 11000000,
+    maxNumberOfTrucks: 50,
+    percentEnergyFromCorridor: 1,
+    corridorChargePower: 180, // kW
+    ownChargingPriceOfEnergy: 2.75,
+    percentEnergyFromOwnCharging: 0,
     
-    // Financial Parameters
-    interestRate: 0.105,
-    loanTerm: 5,
-    truckLifespan: 10,
-    residualValuePercent: 0.25,
+    // Charging Infrastructure Financing
+    infrastructureInterestRate: 0.105,
+    infrastructureLoanTerm: 5,
+    infrastructureLifespan: 10,
+    infrastructureEndOfLifeValue: 0.1,
     
-    // Diesel Trucks
+    // Diesel Trucks - Euro
     euroDiesel: {
-      purchasePrice: 2200000,
-      consumption: 2.5, // km per liter
-      price: 18, // Rand per liter
+      // Operating Parameters
+      permissableOperationalHoursPerDay: 12,
+      averageDrivingTime: 9,
+      loadOffloadTime: 2,
+      averageStoppingTime: 1,
+      workingDaysPerMonth: 24,
       tripsPerMonth: 12,
-      monthsPerYear: 12
+      
+      // Other Operating Costs
+      insuranceAnnualPremiumPercent: 0.06,
+      maintenanceCostPerKm: 1.1,
+      otherCostsPerKm: 4,
+      
+      // Purchase Price
+      purchasePrice: 2200000,
+      
+      // Fuel Parameters
+      consumption: 2.5, // km per liter
+      fuelPrice: 18, // Rand per liter
+      emissionsFactor: 3.48, // kgCO2e per liter
+      
+      // Financing Parameters
+      interestRate: 0.105,
+      loanTerm: 5,
+      lifespan: 10,
+      residualValuePercent: 0.3,
+      endOfLifeValuePercent: 0.1,
+      
+      // Forex
+      dieselImportPercent: 1,
+      truckImportPercent: 1
     },
+    
+    // Diesel Trucks - Chinese
     chineseDiesel: {
+      permissableOperationalHoursPerDay: 12,
+      averageDrivingTime: 9,
+      loadOffloadTime: 2,
+      averageStoppingTime: 1,
+      workingDaysPerMonth: 24,
+      tripsPerMonth: 12,
+      insuranceAnnualPremiumPercent: 0.06,
+      maintenanceCostPerKm: 0.9,
+      otherCostsPerKm: 4,
       purchasePrice: 1400000,
       consumption: 2.3,
-      price: 18,
-      tripsPerMonth: 12,
-      monthsPerYear: 12
+      fuelPrice: 18,
+      emissionsFactor: 3.48,
+      interestRate: 0.105,
+      loanTerm: 5,
+      lifespan: 8,
+      residualValuePercent: 0.2,
+      endOfLifeValuePercent: 0.1,
+      dieselImportPercent: 1,
+      truckImportPercent: 1
     },
     
-    // Electric Trucks
-    electricCharged: {
-      purchasePrice: 4500000,
-      consumption: 1.35, // kWh per km
-      price: 2.5, // Rand per kWh
+    // Electric Trucks - European EV
+    europeanEV: {
+      permissableOperationalHoursPerDay: 12,
+      averageDrivingTime: 9,
+      loadOffloadTime: 2,
+      averageStoppingTime: 1, // Plus charging time calculated
+      workingDaysPerMonth: 24,
       tripsPerMonth: 8,
-      monthsPerYear: 12
+      insuranceAnnualPremiumPercent: 0.06,
+      maintenanceCostPerKm: 0.55,
+      otherCostsPerKm: 4,
+      purchasePrice: 6500000,
+      consumption: 1.25, // kWh per km
+      electricityPrice: 2.75, // Rand per kWh
+      electricityCostToCPO: 1.5,
+      emissionsFactor: 0, // Wheeled solar electricity
+      interestRate: 0.105,
+      loanTerm: 5,
+      lifespan: 10,
+      residualValuePercent: 0.25,
+      endOfLifeValuePercent: 0.1,
+      truckImportPercent: 1,
+      chargeEquipmentImportPercent: 0.7
     },
-    electricSwapped: {
+    
+    // Electric Trucks - Chinese EV Charged
+    chineseEVCharged: {
+      permissableOperationalHoursPerDay: 12,
+      averageDrivingTime: 9,
+      loadOffloadTime: 2,
+      averageStoppingTime: 1,
+      workingDaysPerMonth: 24,
+      tripsPerMonth: 8,
+      insuranceAnnualPremiumPercent: 0.06,
+      maintenanceCostPerKm: 0.45,
+      otherCostsPerKm: 4,
+      purchasePrice: 4500000,
+      consumption: 1.3,
+      electricityPrice: 2.75,
+      electricityCostToCPO: 1.5,
+      emissionsFactor: 0,
+      interestRate: 0.105,
+      loanTerm: 5,
+      lifespan: 10,
+      residualValuePercent: 0.25,
+      endOfLifeValuePercent: 0.1,
+      truckImportPercent: 1,
+      chargeEquipmentImportPercent: 0.7
+    },
+    
+    // Electric Trucks - Chinese EV Swapped
+    chineseEVSwapped: {
+      permissableOperationalHoursPerDay: 12,
+      averageDrivingTime: 9,
+      loadOffloadTime: 2,
+      averageStoppingTime: 1,
+      workingDaysPerMonth: 24,
+      tripsPerMonth: 12,
+      insuranceAnnualPremiumPercent: 0.06,
+      maintenanceCostPerKm: 0.45,
+      otherCostsPerKm: 4,
       purchasePrice: 4500000,
       consumption: 1.35,
-      price: 2.5,
-      tripsPerMonth: 12,
-      monthsPerYear: 12
+      electricityPrice: 2.75,
+      electricityCostToCPO: 1.5,
+      emissionsFactor: 0,
+      interestRate: 0.105,
+      loanTerm: 5,
+      lifespan: 10,
+      residualValuePercent: 0.25,
+      endOfLifeValuePercent: 0.1,
+      truckImportPercent: 1,
+      chargeEquipmentImportPercent: 0.7
     },
-    electricBaaS: {
+    
+    // Electric Trucks - Chinese EV BaaS
+    chineseEVBaaS: {
+      permissableOperationalHoursPerDay: 12,
+      averageDrivingTime: 9,
+      loadOffloadTime: 2,
+      averageStoppingTime: 1,
+      workingDaysPerMonth: 24,
+      tripsPerMonth: 12,
+      insuranceAnnualPremiumPercent: 0.06,
+      maintenanceCostPerKm: 0.45,
+      otherCostsPerKm: 4,
       purchasePrice: 2500000,
       batteryPrice: 2000000,
       consumption: 1.35,
-      price: 2.5,
-      tripsPerMonth: 12,
-      monthsPerYear: 12
+      electricityPrice: 2.75,
+      electricityCostToCPO: 1.5,
+      emissionsFactor: 0,
+      interestRate: 0.105,
+      loanTerm: 5,
+      lifespan: 10,
+      residualValuePercent: 0.25,
+      endOfLifeValuePercent: 0.1,
+      truckImportPercent: 1,
+      chargeEquipmentImportPercent: 0.7
     }
   };
 }
