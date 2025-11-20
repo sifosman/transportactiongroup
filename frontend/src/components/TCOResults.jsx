@@ -234,7 +234,7 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-purple-700">
-              {formatCurrency(electric.charged.totalCostPerKmLoanPeriod)}
+              {formatCurrency(electric.europeanEV.totalCostPerKmLoanPeriod)}
             </div>
             <p className="text-xs text-gray-600 mt-1">
               Electric vs {formatCurrency(diesel.euro.totalCostPerKmLoanPeriod)} Diesel
@@ -386,11 +386,16 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {['charged', 'swapped', 'baas'].map((type) => {
-                    const data = electric[type];
-                    const label = type === 'charged' ? 'Depot Charged' : type === 'swapped' ? 'Battery Swapped' : 'Battery as a Service';
+                  {[
+                    { key: 'europeanEV', label: 'European EV' },
+                    { key: 'chineseEVCharged', label: 'Chinese EV (Charged)' },
+                    { key: 'chineseEVSwapped', label: 'Chinese EV (Swapped)' },
+                    { key: 'chineseEVBaaS', label: 'Chinese EV (BaaS)' }
+                  ].map(({ key, label }) => {
+                    const data = electric[key];
+                    if (!data) return null;
                     return (
-                      <div key={type} className="p-4 bg-green-50 rounded-lg">
+                      <div key={key} className="p-4 bg-green-50 rounded-lg">
                         <h4 className="font-semibold mb-2">{label}</h4>
                         <div className="space-y-1 text-sm">
                           <div className="flex justify-between">
