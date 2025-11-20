@@ -17,6 +17,7 @@ import {
 export default function TCOInputForm({ initialInputs, onCalculate, onBack }) {
   const [inputs, setInputs] = useState(initialInputs);
   const [activeTab, setActiveTab] = useState('corridor');
+  const [validationErrors, setValidationErrors] = useState([]);
 
   // Update input value
   const updateValue = (category, field, value) => {
@@ -40,6 +41,63 @@ export default function TCOInputForm({ initialInputs, onCalculate, onBack }) {
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const errors = [];
+
+    // Helper to test required numeric fields (0 or undefined treated as missing)
+    const isMissing = (val) => val === undefined || val === null || val === '' || Number(val) === 0;
+
+    // Corridor & finance
+    if (isMissing(inputs.distanceOneWay)) errors.push('Distance one way (km) is required.');
+    if (isMissing(inputs.exchangeRate)) errors.push('Exchange rate is required.');
+    if (isMissing(inputs.interestRate)) errors.push('Interest rate is required.');
+    if (isMissing(inputs.loanTerm)) errors.push('Loan term is required.');
+    if (isMissing(inputs.truckLifespan)) errors.push('Truck lifespan is required.');
+    if (isMissing(inputs.residualValuePercent)) errors.push('Residual value percentage is required.');
+    if (isMissing(inputs.otherCostsPerKm)) errors.push('Other costs per km are required.');
+
+    // Diesel - Euro
+    if (!inputs.euroDiesel || isMissing(inputs.euroDiesel.purchasePrice)) errors.push('Euro diesel purchase price is required.');
+    if (!inputs.euroDiesel || isMissing(inputs.euroDiesel.consumption)) errors.push('Euro diesel fuel consumption is required.');
+    if (!inputs.euroDiesel || isMissing(inputs.euroDiesel.price)) errors.push('Euro diesel price is required.');
+    if (!inputs.euroDiesel || isMissing(inputs.euroDiesel.tripsPerMonth)) errors.push('Euro diesel trips per month are required.');
+
+    // Diesel - Chinese
+    if (!inputs.chineseDiesel || isMissing(inputs.chineseDiesel.purchasePrice)) errors.push('Chinese diesel purchase price is required.');
+    if (!inputs.chineseDiesel || isMissing(inputs.chineseDiesel.consumption)) errors.push('Chinese diesel fuel consumption is required.');
+    if (!inputs.chineseDiesel || isMissing(inputs.chineseDiesel.price)) errors.push('Chinese diesel price is required.');
+    if (!inputs.chineseDiesel || isMissing(inputs.chineseDiesel.tripsPerMonth)) errors.push('Chinese diesel trips per month are required.');
+
+    // Electric - Depot charged
+    if (!inputs.electricCharged || isMissing(inputs.electricCharged.purchasePrice)) errors.push('Depot charged electric purchase price is required.');
+    if (!inputs.electricCharged || isMissing(inputs.electricCharged.consumption)) errors.push('Depot charged electric energy consumption is required.');
+    if (!inputs.electricCharged || isMissing(inputs.electricCharged.price)) errors.push('Depot charged electricity price is required.');
+    if (!inputs.electricCharged || isMissing(inputs.electricCharged.tripsPerMonth)) errors.push('Depot charged electric trips per month are required.');
+
+    // Electric - Swapped
+    if (!inputs.electricSwapped || isMissing(inputs.electricSwapped.purchasePrice)) errors.push('Battery swapped electric purchase price is required.');
+    if (!inputs.electricSwapped || isMissing(inputs.electricSwapped.consumption)) errors.push('Battery swapped electric energy consumption is required.');
+    if (!inputs.electricSwapped || isMissing(inputs.electricSwapped.price)) errors.push('Battery swapped electricity price is required.');
+    if (!inputs.electricSwapped || isMissing(inputs.electricSwapped.tripsPerMonth)) errors.push('Battery swapped electric trips per month are required.');
+
+    // Electric - BaaS
+    if (!inputs.electricBaaS || isMissing(inputs.electricBaaS.purchasePrice)) errors.push('Battery-as-a-Service purchase price (without battery) is required.');
+    if (!inputs.electricBaaS || isMissing(inputs.electricBaaS.batteryPrice)) errors.push('Battery-as-a-Service battery subscription cost is required.');
+    if (!inputs.electricBaaS || isMissing(inputs.electricBaaS.consumption)) errors.push('Battery-as-a-Service energy consumption is required.');
+    if (!inputs.electricBaaS || isMissing(inputs.electricBaaS.price)) errors.push('Battery-as-a-Service electricity price is required.');
+    if (!inputs.electricBaaS || isMissing(inputs.electricBaaS.tripsPerMonth)) errors.push('Battery-as-a-Service trips per month are required.');
+
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      // Optionally jump to first tab with likely error
+      const firstError = errors[0] || '';
+      if (firstError.toLowerCase().includes('diesel')) setActiveTab('diesel');
+      else if (firstError.toLowerCase().includes('electric')) setActiveTab('electric');
+      else setActiveTab('corridor');
+      return;
+    }
+
+    setValidationErrors([]);
     onCalculate(inputs);
   };
 
@@ -94,6 +152,19 @@ export default function TCOInputForm({ initialInputs, onCalculate, onBack }) {
             All values marked with <span className="text-yellow-600 font-semibold">*</span> are editable.
           </AlertDescription>
         </Alert>
+
+        {validationErrors.length > 0 && (
+          <Alert className="mb-4 border-red-300 bg-red-50 text-red-800">
+            <AlertDescription>
+              Please correct the following before calculating:
+              <ul className="mt-2 list-disc list-inside text-sm">
+                {validationErrors.map((msg, idx) => (
+                  <li key={idx}>{msg}</li>
+                ))}
+              </ul>
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Input Tabs */}
         <Tabs
