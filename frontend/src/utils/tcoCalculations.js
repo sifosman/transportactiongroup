@@ -359,6 +359,14 @@ export function getDefaultInputs(corridor = 'south-africa') {
     exchangeRate: corridor_info.exchangeRate,
     chargeOutFreightRate: 20, // Rand per km to customer
     
+    // Shared financial defaults (form uses these, defaults to Euro diesel values)
+    interestRate: 0.105,
+    loanTerm: 5,
+    truckLifespan: 10,
+    residualValuePercent: 0.3,
+    otherCostsPerKm: 4,
+    returnTripDistance: corridor_info.distance * 2,
+    
     // Corridor Parameters
     distanceOneWay: corridor_info.distance,
     
@@ -540,8 +548,18 @@ export function getDefaultInputs(corridor = 'south-africa') {
 
   // Backward-compatible aliases for existing components and saved data
   // These mirror the new structures so references like inputs.electricCharged.* still work.
+  // Also add 'price' aliases to diesel trucks so form can use .price instead of .fuelPrice
   return {
     ...base,
+    // Add price alias to diesel trucks for form compatibility
+    euroDiesel: {
+      ...base.euroDiesel,
+      price: base.euroDiesel.fuelPrice,
+    },
+    chineseDiesel: {
+      ...base.chineseDiesel,
+      price: base.chineseDiesel.fuelPrice,
+    },
     electricCharged: {
       purchasePrice: base.europeanEV.purchasePrice,
       consumption: base.europeanEV.consumption,
