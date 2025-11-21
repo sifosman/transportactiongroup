@@ -43,11 +43,10 @@ export default function TCOCalculator() {
     const euroDieselResults = calculateDieselAnalysis(formInputs, 'euro');
     const chineseDieselResults = calculateDieselAnalysis(formInputs, 'chinese');
 
-    // Calculate electric results
+    // Calculate electric results (exclude BaaS variant)
     const europeanEVResults = calculateElectricAnalysis(formInputs, 'europeanEV');
     const chineseEVChargedResults = calculateElectricAnalysis(formInputs, 'chineseEVCharged');
     const chineseEVSwappedResults = calculateElectricAnalysis(formInputs, 'chineseEVSwapped');
-    const chineseEVBaaSResults = calculateElectricAnalysis(formInputs, 'chineseEVBaaS');
 
     // Generate comparisons
     const comparisonVsEuro = generateComparison(euroDieselResults, europeanEVResults);
@@ -67,8 +66,7 @@ export default function TCOCalculator() {
       electric: {
         europeanEV: europeanEVResults,
         chineseEVCharged: chineseEVChargedResults,
-        chineseEVSwapped: chineseEVSwappedResults,
-        chineseEVBaaS: chineseEVBaaSResults
+        chineseEVSwapped: chineseEVSwappedResults
       },
       comparisons: {
         vsEuro: comparisonVsEuro,

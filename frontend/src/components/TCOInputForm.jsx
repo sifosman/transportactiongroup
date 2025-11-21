@@ -80,13 +80,6 @@ export default function TCOInputForm({ initialInputs, onCalculate, onBack }) {
     if (!inputs.electricSwapped || isMissing(inputs.electricSwapped.price)) errors.push('Battery swapped electricity price is required.');
     if (!inputs.electricSwapped || isMissing(inputs.electricSwapped.tripsPerMonth)) errors.push('Battery swapped electric trips per month are required.');
 
-    // Electric - BaaS
-    if (!inputs.electricBaaS || isMissing(inputs.electricBaaS.purchasePrice)) errors.push('Battery-as-a-Service purchase price (without battery) is required.');
-    if (!inputs.electricBaaS || isMissing(inputs.electricBaaS.batteryPrice)) errors.push('Battery-as-a-Service battery subscription cost is required.');
-    if (!inputs.electricBaaS || isMissing(inputs.electricBaaS.consumption)) errors.push('Battery-as-a-Service energy consumption is required.');
-    if (!inputs.electricBaaS || isMissing(inputs.electricBaaS.price)) errors.push('Battery-as-a-Service electricity price is required.');
-    if (!inputs.electricBaaS || isMissing(inputs.electricBaaS.tripsPerMonth)) errors.push('Battery-as-a-Service trips per month are required.');
-
     if (errors.length > 0) {
       setValidationErrors(errors);
       // Optionally jump to first tab with likely error
@@ -468,50 +461,6 @@ export default function TCOInputForm({ initialInputs, onCalculate, onBack }) {
                       </AccordionContent>
                     </AccordionItem>
 
-                    {/* Electric BaaS */}
-                    <AccordionItem value="baas">
-                      <AccordionTrigger className="text-lg font-semibold">
-                        Electric (Battery as a Service)
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <div className="grid md:grid-cols-2 gap-3 pt-4">
-                          <NumberInput
-                            label="Purchase Price (without battery) *"
-                            value={inputs.electricBaaS.purchasePrice}
-                            onChange={(v) => updateValue('electricBaaS', 'purchasePrice', v)}
-                            prefix={inputs.currencySymbol}
-                            helpText="Lower upfront cost"
-                          />
-                          <NumberInput
-                            label="Battery Subscription Cost *"
-                            value={inputs.electricBaaS.batteryPrice}
-                            onChange={(v) => updateValue('electricBaaS', 'batteryPrice', v)}
-                            prefix={inputs.currencySymbol}
-                            helpText="Annual battery rental/service cost"
-                          />
-                          <NumberInput
-                            label="Energy Consumption *"
-                            value={inputs.electricBaaS.consumption}
-                            onChange={(v) => updateValue('electricBaaS', 'consumption', v)}
-                            suffix="kWh/km"
-                            step="0.01"
-                          />
-                          <NumberInput
-                            label="Electricity Price *"
-                            value={inputs.electricBaaS.price}
-                            onChange={(v) => updateValue('electricBaaS', 'price', v)}
-                            prefix={inputs.currencySymbol}
-                            suffix="/kWh"
-                            step="0.1"
-                          />
-                          <NumberInput
-                            label="Trips per Month *"
-                            value={inputs.electricBaaS.tripsPerMonth}
-                            onChange={(v) => updateValue('electricBaaS', 'tripsPerMonth', v)}
-                          />
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
                   </Accordion>
                 </CardContent>
               </Card>
@@ -598,14 +547,6 @@ export default function TCOInputForm({ initialInputs, onCalculate, onBack }) {
                           {inputs.currencySymbol}{inputs.electricSwapped.purchasePrice.toLocaleString()} • 
                           {inputs.electricSwapped.consumption} kWh/km • 
                           {inputs.electricSwapped.tripsPerMonth} trips/month
-                        </p>
-                      </div>
-                      <div className="p-3 bg-green-50 rounded">
-                        <p className="font-medium">Battery as a Service</p>
-                        <p className="text-sm text-gray-600">
-                          {inputs.currencySymbol}{inputs.electricBaaS.purchasePrice.toLocaleString()} • 
-                          {inputs.electricBaaS.consumption} kWh/km • 
-                          {inputs.electricBaaS.tripsPerMonth} trips/month
                         </p>
                       </div>
                     </div>

@@ -100,14 +100,6 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
         bgColor: 'bg-teal-50', 
         borderColor: 'border-teal-200',
         badge: { text: '🇨🇳 Chinese • Swapped', color: 'bg-teal-100 text-teal-800' }
-      },
-      chineseEVBaaS: { 
-        icon: Battery, 
-        label: 'Chinese EV', 
-        color: 'text-cyan-600', 
-        bgColor: 'bg-cyan-50', 
-        borderColor: 'border-cyan-200',
-        badge: { text: '🇨🇳 Chinese • BaaS', color: 'bg-cyan-100 text-cyan-800' }
       }
     }
   };
@@ -157,11 +149,6 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
       value: electric.chineseEVSwapped.annualCostFinancePeriod,
       fill: '#0d9488'
     },
-    {
-      name: 'Chinese EV BaaS',
-      value: electric.chineseEVBaaS.annualCostFinancePeriod,
-      fill: '#14b8a6'
-    }
   ];
 
   // 10-year projection data
@@ -378,8 +365,7 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
                 { type: 'Chinese Diesel', cost: diesel.chinese.totalCostPerKmLoanPeriod, icon: Fuel, color: 'purple' },
                 { type: 'European EV', cost: electric.europeanEV.totalCostPerKmLoanPeriod, icon: Zap, color: 'green' },
                 { type: 'Chinese EV (Charged)', cost: electric.chineseEVCharged.totalCostPerKmLoanPeriod, icon: BatteryCharging, color: 'emerald' },
-                { type: 'Chinese EV (Swapped)', cost: electric.chineseEVSwapped.totalCostPerKmLoanPeriod, icon: Repeat, color: 'teal' },
-                { type: 'Chinese EV (BaaS)', cost: electric.chineseEVBaaS.totalCostPerKmLoanPeriod, icon: Battery, color: 'cyan' }
+                { type: 'Chinese EV (Swapped)', cost: electric.chineseEVSwapped.totalCostPerKmLoanPeriod, icon: Repeat, color: 'teal' }
               ];
               const lowestCost = allTrucks.reduce((min, truck) => truck.cost < min.cost ? truck : min);
               const Icon = lowestCost.icon;
@@ -402,8 +388,7 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
                 { type: 'Chinese Diesel', cost: diesel.chinese.lifetimeCost, icon: Fuel, color: 'purple' },
                 { type: 'European EV', cost: electric.europeanEV.lifetimeCost, icon: Zap, color: 'green' },
                 { type: 'Chinese EV (Charged)', cost: electric.chineseEVCharged.lifetimeCost, icon: BatteryCharging, color: 'emerald' },
-                { type: 'Chinese EV (Swapped)', cost: electric.chineseEVSwapped.lifetimeCost, icon: Repeat, color: 'teal' },
-                { type: 'Chinese EV (BaaS)', cost: electric.chineseEVBaaS.lifetimeCost, icon: Battery, color: 'cyan' }
+                { type: 'Chinese EV (Swapped)', cost: electric.chineseEVSwapped.lifetimeCost, icon: Repeat, color: 'teal' }
               ];
               const lowestLifetime = allTrucks.reduce((min, truck) => truck.cost < min.cost ? truck : min);
               const Icon = lowestLifetime.icon;
@@ -493,8 +478,7 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
                       ...liveInputs,
                       europeanEV: { ...liveInputs.europeanEV, electricityPrice: newValue, price: newValue },
                       chineseEVCharged: { ...liveInputs.chineseEVCharged, electricityPrice: newValue, price: newValue },
-                      chineseEVSwapped: { ...liveInputs.chineseEVSwapped, electricityPrice: newValue, price: newValue },
-                      chineseEVBaaS: { ...liveInputs.chineseEVBaaS, electricityPrice: newValue, price: newValue }
+                      chineseEVSwapped: { ...liveInputs.chineseEVSwapped, electricityPrice: newValue, price: newValue }
                     };
                     setLiveInputs(updated);
                     if (onInputChange) onInputChange(updated);
@@ -593,8 +577,7 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
                       chineseDiesel: { ...liveInputs.chineseDiesel, interestRate: newValue },
                       europeanEV: { ...liveInputs.europeanEV, interestRate: newValue },
                       chineseEVCharged: { ...liveInputs.chineseEVCharged, interestRate: newValue },
-                      chineseEVSwapped: { ...liveInputs.chineseEVSwapped, interestRate: newValue },
-                      chineseEVBaaS: { ...liveInputs.chineseEVBaaS, interestRate: newValue }
+                      chineseEVSwapped: { ...liveInputs.chineseEVSwapped, interestRate: newValue }
                     };
                     setLiveInputs(updated);
                     if (onInputChange) onInputChange(updated);
