@@ -868,8 +868,9 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
                   <YAxis />
                   <Tooltip formatter={(value) => formatCurrency(value)} />
                   <Legend />
-                  <Line type="monotone" dataKey="Diesel" stroke={COLORS.diesel} strokeWidth={2} />
-                  <Line type="monotone" dataKey="Electric" stroke={COLORS.electric} strokeWidth={2} />
+                  {/* Keys must match yearlyProjection object fields */}
+                  <Line type="monotone" dataKey="Euro Diesel" stroke={COLORS.diesel} strokeWidth={2} />
+                  <Line type="monotone" dataKey="European EV" stroke={COLORS.electric} strokeWidth={2} />
                 </LineChart>
               </ResponsiveContainer>
               <div className="mt-4 p-4 bg-blue-50 rounded-lg">
