@@ -7,6 +7,7 @@ import { Separator } from './ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
+import { Slider } from './ui/slider';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import {
   BarChart,
@@ -442,49 +443,59 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
               <div className="space-y-2">
                 <Label className="text-sm font-medium flex items-center gap-2">
                   <Fuel className="w-4 h-4" />
-                  Diesel Price ({liveInputs.currencySymbol}/L)
+                  Diesel Price ({currencySymbol}/L)
                 </Label>
-                <Input
-                  type="number"
-                  step="0.1"
-                  value={liveInputs.euroDiesel?.fuelPrice || 18}
-                  onChange={(e) => {
-                    const newValue = parseFloat(e.target.value) || 0;
-                    const updated = {
-                      ...liveInputs,
-                      euroDiesel: { ...liveInputs.euroDiesel, fuelPrice: newValue, price: newValue },
-                      chineseDiesel: { ...liveInputs.chineseDiesel, fuelPrice: newValue, price: newValue }
-                    };
-                    setLiveInputs(updated);
-                    if (onInputChange) onInputChange(updated);
-                  }}
-                  className="w-full"
-                />
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs text-gray-600">
+                    <span>{currencySymbol}{(liveInputs.euroDiesel?.fuelPrice ?? 18).toFixed(2)} /L</span>
+                  </div>
+                  <Slider
+                    min={10}
+                    max={40}
+                    step={0.1}
+                    value={[liveInputs.euroDiesel?.fuelPrice ?? 18]}
+                    onValueChange={([val]) => {
+                      const newValue = val ?? 0;
+                      const updated = {
+                        ...liveInputs,
+                        euroDiesel: { ...liveInputs.euroDiesel, fuelPrice: newValue, price: newValue },
+                        chineseDiesel: { ...liveInputs.chineseDiesel, fuelPrice: newValue, price: newValue }
+                      };
+                      setLiveInputs(updated);
+                      if (onInputChange) onInputChange(updated);
+                    }}
+                  />
+                </div>
               </div>
 
               {/* Electricity Price */}
               <div className="space-y-2">
                 <Label className="text-sm font-medium flex items-center gap-2">
                   <Zap className="w-4 h-4" />
-                  Electricity Price ({liveInputs.currencySymbol}/kWh)
+                  Electricity Price ({currencySymbol}/kWh)
                 </Label>
-                <Input
-                  type="number"
-                  step="0.1"
-                  value={liveInputs.europeanEV?.electricityPrice || 2.75}
-                  onChange={(e) => {
-                    const newValue = parseFloat(e.target.value) || 0;
-                    const updated = {
-                      ...liveInputs,
-                      europeanEV: { ...liveInputs.europeanEV, electricityPrice: newValue, price: newValue },
-                      chineseEVCharged: { ...liveInputs.chineseEVCharged, electricityPrice: newValue, price: newValue },
-                      chineseEVSwapped: { ...liveInputs.chineseEVSwapped, electricityPrice: newValue, price: newValue }
-                    };
-                    setLiveInputs(updated);
-                    if (onInputChange) onInputChange(updated);
-                  }}
-                  className="w-full"
-                />
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs text-gray-600">
+                    <span>{currencySymbol}{(liveInputs.europeanEV?.electricityPrice ?? 2.75).toFixed(2)} /kWh</span>
+                  </div>
+                  <Slider
+                    min={0.5}
+                    max={5}
+                    step={0.05}
+                    value={[liveInputs.europeanEV?.electricityPrice ?? 2.75]}
+                    onValueChange={([val]) => {
+                      const newValue = val ?? 0;
+                      const updated = {
+                        ...liveInputs,
+                        europeanEV: { ...liveInputs.europeanEV, electricityPrice: newValue, price: newValue },
+                        chineseEVCharged: { ...liveInputs.chineseEVCharged, electricityPrice: newValue, price: newValue },
+                        chineseEVSwapped: { ...liveInputs.chineseEVSwapped, electricityPrice: newValue, price: newValue }
+                      };
+                      setLiveInputs(updated);
+                      if (onInputChange) onInputChange(updated);
+                    }}
+                  />
+                </div>
               </div>
 
               {/* Distance */}
@@ -493,69 +504,84 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
                   <BarChart3 className="w-4 h-4" />
                   Distance One-Way (km)
                 </Label>
-                <Input
-                  type="number"
-                  step="10"
-                  value={liveInputs.distanceOneWay || 600}
-                  onChange={(e) => {
-                    const newValue = parseFloat(e.target.value) || 0;
-                    const updated = {
-                      ...liveInputs,
-                      distanceOneWay: newValue,
-                      returnTripDistance: newValue * 2
-                    };
-                    setLiveInputs(updated);
-                    if (onInputChange) onInputChange(updated);
-                  }}
-                  className="w-full"
-                />
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs text-gray-600">
+                    <span>{(liveInputs.distanceOneWay ?? 600).toFixed(0)} km</span>
+                  </div>
+                  <Slider
+                    min={100}
+                    max={2000}
+                    step={10}
+                    value={[liveInputs.distanceOneWay ?? 600]}
+                    onValueChange={([val]) => {
+                      const newValue = val ?? 0;
+                      const updated = {
+                        ...liveInputs,
+                        distanceOneWay: newValue,
+                        returnTripDistance: newValue * 2
+                      };
+                      setLiveInputs(updated);
+                      if (onInputChange) onInputChange(updated);
+                    }}
+                  />
+                </div>
               </div>
 
               {/* Euro Diesel Purchase Price */}
               <div className="space-y-2">
                 <Label className="text-sm font-medium flex items-center gap-2">
                   <DollarSign className="w-4 h-4" />
-                  Euro Diesel Price ({liveInputs.currencySymbol})
+                  Euro Diesel Price ({currencySymbol})
                 </Label>
-                <Input
-                  type="number"
-                  step="10000"
-                  value={liveInputs.euroDiesel?.purchasePrice || 2200000}
-                  onChange={(e) => {
-                    const newValue = parseFloat(e.target.value) || 0;
-                    const updated = {
-                      ...liveInputs,
-                      euroDiesel: { ...liveInputs.euroDiesel, purchasePrice: newValue }
-                    };
-                    setLiveInputs(updated);
-                    if (onInputChange) onInputChange(updated);
-                  }}
-                  className="w-full"
-                />
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs text-gray-600">
+                    <span>{currencySymbol}{(liveInputs.euroDiesel?.purchasePrice ?? 2200000).toLocaleString()}</span>
+                  </div>
+                  <Slider
+                    min={1000000}
+                    max={4000000}
+                    step={50000}
+                    value={[liveInputs.euroDiesel?.purchasePrice ?? 2200000]}
+                    onValueChange={([val]) => {
+                      const newValue = val ?? 0;
+                      const updated = {
+                        ...liveInputs,
+                        euroDiesel: { ...liveInputs.euroDiesel, purchasePrice: newValue }
+                      };
+                      setLiveInputs(updated);
+                      if (onInputChange) onInputChange(updated);
+                    }}
+                  />
+                </div>
               </div>
 
               {/* European EV Purchase Price */}
               <div className="space-y-2">
                 <Label className="text-sm font-medium flex items-center gap-2">
                   <DollarSign className="w-4 h-4" />
-                  European EV Price ({liveInputs.currencySymbol})
+                  European EV Price ({currencySymbol})
                 </Label>
-                <Input
-                  type="number"
-                  step="10000"
-                  value={liveInputs.europeanEV?.purchasePrice || 6500000}
-                  onChange={(e) => {
-                    const newValue = parseFloat(e.target.value) || 0;
-                    const updated = {
-                      ...liveInputs,
-                      europeanEV: { ...liveInputs.europeanEV, purchasePrice: newValue },
-                      electricCharged: { ...liveInputs.electricCharged, purchasePrice: newValue }
-                    };
-                    setLiveInputs(updated);
-                    if (onInputChange) onInputChange(updated);
-                  }}
-                  className="w-full"
-                />
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs text-gray-600">
+                    <span>{currencySymbol}{(liveInputs.europeanEV?.purchasePrice ?? 6500000).toLocaleString()}</span>
+                  </div>
+                  <Slider
+                    min={3000000}
+                    max={8000000}
+                    step={50000}
+                    value={[liveInputs.europeanEV?.purchasePrice ?? 6500000]}
+                    onValueChange={([val]) => {
+                      const newValue = val ?? 0;
+                      const updated = {
+                        ...liveInputs,
+                        europeanEV: { ...liveInputs.europeanEV, purchasePrice: newValue },
+                        electricCharged: { ...liveInputs.electricCharged, purchasePrice: newValue }
+                      };
+                      setLiveInputs(updated);
+                      if (onInputChange) onInputChange(updated);
+                    }}
+                  />
+                </div>
               </div>
 
               {/* Interest Rate */}
@@ -564,26 +590,32 @@ export default function TCOResults({ results, inputs, onSave, onReset, onRecalcu
                   <TrendingUp className="w-4 h-4" />
                   Interest Rate (%)
                 </Label>
-                <Input
-                  type="number"
-                  step="0.1"
-                  value={(liveInputs.interestRate || 0.105) * 100}
-                  onChange={(e) => {
-                    const newValue = parseFloat(e.target.value) / 100 || 0;
-                    const updated = {
-                      ...liveInputs,
-                      interestRate: newValue,
-                      euroDiesel: { ...liveInputs.euroDiesel, interestRate: newValue },
-                      chineseDiesel: { ...liveInputs.chineseDiesel, interestRate: newValue },
-                      europeanEV: { ...liveInputs.europeanEV, interestRate: newValue },
-                      chineseEVCharged: { ...liveInputs.chineseEVCharged, interestRate: newValue },
-                      chineseEVSwapped: { ...liveInputs.chineseEVSwapped, interestRate: newValue }
-                    };
-                    setLiveInputs(updated);
-                    if (onInputChange) onInputChange(updated);
-                  }}
-                  className="w-full"
-                />
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs text-gray-600">
+                    <span>{((liveInputs.interestRate ?? 0.105) * 100).toFixed(1)}%</span>
+                  </div>
+                  <Slider
+                    min={0}
+                    max={25}
+                    step={0.1}
+                    value={[(liveInputs.interestRate ?? 0.105) * 100]}
+                    onValueChange={([val]) => {
+                      const pct = val ?? 0;
+                      const newValue = pct / 100;
+                      const updated = {
+                        ...liveInputs,
+                        interestRate: newValue,
+                        euroDiesel: { ...liveInputs.euroDiesel, interestRate: newValue },
+                        chineseDiesel: { ...liveInputs.chineseDiesel, interestRate: newValue },
+                        europeanEV: { ...liveInputs.europeanEV, interestRate: newValue },
+                        chineseEVCharged: { ...liveInputs.chineseEVCharged, interestRate: newValue },
+                        chineseEVSwapped: { ...liveInputs.chineseEVSwapped, interestRate: newValue }
+                      };
+                      setLiveInputs(updated);
+                      if (onInputChange) onInputChange(updated);
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </CardContent>
